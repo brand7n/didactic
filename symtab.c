@@ -224,6 +224,6 @@ struct heapnode *makeheap(void){
 
 void list_symbols(){
 	struct heapnode *heap = makeheap();
-	fputc('\n',listfile);
+	if(listfile) fputc('\n',listfile);
 	heapdump(heap);
 }
