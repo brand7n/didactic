@@ -1,5 +1,5 @@
     This file is part of The Didactic PDP-8 Assembler
-    Copyright (C) 2002 Toby Thain, toby@telegraphics.com.au
+    Copyright (C) 2002-5 Toby Thain, toby@telegraphics.com.au
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by  
@@ -24,8 +24,7 @@ assembler may lend itself to learning, extension and modification by
 interested parties. While I do not own a PDP-8 (more's the pity), this
 architecture was chosen partly for its similarity to another DeCastro design,
 the DG Nova 3. The project was mainly inspired by my friend Emil Sarlija 
-( http://www.chookfest.net/ ) who owns a Nova 3 and wants to write
-an assembler for it.
+( http://www.chookfest.net/ ) who owns a Nova 3 and needed an assembler for it.
 
 The PDP-8 assembler ("p8a") input syntax is compatible with the assembler 
 described in the "PAL III Symbolic Assembler PDP-8 Programming Manual,"
@@ -38,23 +37,32 @@ Binary object output is in RIM or BIN format. Some of the output routines
 are based on parts of Douglas Jones' PDP-8 assembler
 ( ftp://ftp.cs.uiowa.edu/pub/jones/pdp8/pal.c.Z ).
 
-An assembler for DG Nova architecture is also included. This follows the
-User's Manual (Programmer's Reference) for the DG Nova range of computers.
-The instruction set, addressing modes and syntax are complete, but
-the Nova native object file format (RB) is only partially implemented. 
-(An RB format file dump utility, dumprb, is included in the Nova directory.)
-
 The "verbose" mode (-v) includes a disassembler with a "diagrammatic" output
 format designed to show each instruction's physical layout (in particular
 the microcoded instructions).
 
+
+An assembler for DG Nova architecture is also included. This follows the
+User's Manual (Programmer's Reference) for the DG Nova range of computers.
+The instruction set, addressing modes and syntax are complete, but
+the Nova native object file format (RB) is only partially implemented.
+(An RB format file dump utility, dumprb, is included in the Nova directory.)
+
+Nova bootstrap format is also supported with the -b flag;
+this is program of up to 191 words assembled at an absolute origin of 0100
+(see Nova Programmer's Reference, page VI-7, for more details).
+
+
 This program has been built and tested under NetBSD 1.5/SPARC, 
-Linux/Alpha (Debian 2.2), OS X 10.2 and 10.3 (PowerPC G4), NEXTSTEP 3.3/HPPA.
+Linux/Alpha (Debian 2.2), OS X 10.2,3,4 (PowerPC G4), NEXTSTEP 3.3/HPPA.
+
 
 Notes on building
+
 1. GNU make is required 
 2. flex ( http://www.gnu.org/directory/flex.html ) is required, 
 as the lexical analysers use features not available in traditional UNIX lex.
 
 Please contact the author with any bug reports, suggestions or comments. 
-The latest version is always available at http://www.telegraphics.com.au/sw/
+The latest version is always available from the Subversion repository at
+http://www.telegraphics.com.au/svn/dpa/trunk/
