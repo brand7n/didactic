@@ -14,5 +14,6 @@ v1.0, 4-Sep-2002
  19-Dec-2003: 1.94 - fix .RDX; check for invalid Nova 3 2AC instructions
  07-Jan-2004: 1.95 - fix failure to increment curloc on pass 1 (Nova)
  16-May-2004: 1.95r2 - fix missing files (pdp8/list.c, nova/list.c) in dist :( !
+ 25-Apr-2005: 1.96 - add Nova bootstrap format output (per Emil Sarlija's suggestion)
 */
-#define VERS_STR "1.95"
+#define VERS_STR "1.96"

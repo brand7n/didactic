@@ -21,7 +21,7 @@
 #include "version.h"
 
 extern int yydebug;
-int debug = 0,pass,interactive = 0,verbose = 0,listing = 0;
+int debug = 0,pass,interactive = 0,verbose = 0,listing = 0,bootprog = 0;
 char *default_out = "dpa.out",*inputfile;
 int symfile[20],symflag, /* default flags for new symbols */
 	endflag; /* parser sets this if symbol table needs to be reset */
@@ -51,7 +51,7 @@ void makepass(int p,FILE *fp){
 }
 
 void banner(){
-	printf("%s Assembler " VERS_STR ", Copyright (C) 2002-3 Toby Thain\n\n",target_arch);
+	printf("%s Assembler " VERS_STR ", Copyright (C) 2002-5 Toby Thain\n\n",target_arch);
 }
 
 void usage(char *s){
@@ -61,6 +61,7 @@ void usage(char *s){
        -r : [PDP-8] produce RIM-format output file\n\
             (default output format is BIN)\n\
        -p : [PDP-8] punch 2' lead-in and lead-out\n\
+       -b : [Nova] output a bootstrap program (see Prog. Ref. page VI-7)\n\
        -v : be verbose (show object as it is generated, and dump symbol table)\n\
        -l : write listing file (FILE.lst)\n\
        -w : show warranty\n\
@@ -84,7 +85,8 @@ int main(int argc,char *argv[]){
 				break;
 			case 'd': debug = 1; break;
 			case 'r': rimflag = 1; objsuffix = ".rim"; break;
-			case 'p': leader = 1; break;
+      case 'p': leader = 1; break;
+      case 'b': bootprog = 1; break;
 			case 'v': verbose = 1; break;
 			case 'l': listing = 1; break;
 			case 'w': banner(); warranty(); return EXIT_SUCCESS;

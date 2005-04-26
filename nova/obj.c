@@ -20,15 +20,17 @@
 #include "asm.h"
 #include "nova.h"
 
-extern int wordmask,listing; // full word bit mask for target architecture
-int words,cksum,rimflag = 0,leader = 0;
+#define MAX_BOOTSTRAP 192  /* bootstrap program size limit (words);
+                              see Nova Prog. Ref., page VI-7 */
+
+extern int wordmask,listing,bootprog; // full word bit mask for target architecture
+int words,cksum,rimflag = 0,leader = 0,bootwords;
 
 /* there is one location counter for each of the three
    relocation modes: Absolute (curloc), Normal Relocatable (nrel_loc)
    and Zero Page Relocatable (zrel_loc) */
 int relmode, /* relocation mode currently in effect */
 	curloc = 0,nrel_loc = 0,zrel_loc = 0;
-
 
 extern FILE *listfile;
 
@@ -37,8 +39,13 @@ static RB_WORD rb_block[ RB_HEADER_WORDS + 3*15 ];
 static int rb_count = 0,rb_blocks = 0;
 
 void initcurloc(){
-	curloc = nrel_loc = zrel_loc = 0;
+  if(bootprog){
+   curloc = nrel_loc = 0100;
+   zrel_loc = 0;
+  }else
+   curloc = nrel_loc = zrel_loc = 0;
 }
+
 int currentloc(){
 	switch(relmode){
 	case ABSOLUTE: return curloc; 
@@ -48,11 +55,27 @@ int currentloc(){
 }
 
 void objheader(){
-	rb_blocks = rb_count = 0;
+  int i;
+
+  if(bootprog){
+    for(i=15;i--;) 
+      fputc(0,obj); /* 7 words & 1 byte of nominal leader */
+    fputc(0377,obj); /* non-zero "synchronisation byte" */
+    bootwords = words+1;
+    if(bootwords > MAX_BOOTSTRAP){
+      warning("bootstrap is longer than 192 words; excess ignored");
+      bootwords = MAX_BOOTSTRAP;
+    }
+    /* first word is word count including this one: */
+    fputc((-bootwords)>>8,obj); fputc(-bootwords,obj);
+    --bootwords;
+  }else
+    rb_blocks = rb_count = 0;
 }
 
 void objfooter(){
-	flushrb();
+	if(!bootprog)
+    flushrb();
 }
 
 void rb_putblock(RB_WORD type,RB_WORD b[],int n){
@@ -68,18 +91,21 @@ void rb_putblock(RB_WORD type,RB_WORD b[],int n){
 	rb_count = 0;
 	++rb_blocks;
 }
+
 void startrb(){
 	rb_block[ RB_RELFLAGS0 ] = rb_block[ RB_RELFLAGS1 ] = rb_block[ RB_RELFLAGS2 ] = 0;
 	rb_block[ RB_HEADER_WORDS ] = currentloc();
 	setrelflag(rb_block,0,relmode);
 	rb_count = 1;
 }
+
 void flushrb(){
 	if(pass==2 && rb_count){
 		DPUTS("# flushing Relocatable Data block...");
 		rb_putblock(REL_DATA_BLK,rb_block,rb_count);
 	}
 }
+
 void rbtitle(struct sym_rec *s){
 	if(pass==2){
 			flushrb();
@@ -93,6 +119,7 @@ void rbtitle(struct sym_rec *s){
 			}
 	}
 }
+
 void rbsymlist(RB_WORD type,int symtype,struct sym_rec *symlist[],int nsyms){
 	int i;
 	if(pass==2){
@@ -113,6 +140,7 @@ void rbsymlist(RB_WORD type,int symtype,struct sym_rec *symlist[],int nsyms){
 		rb_putblock(type,rb_block,3*nsyms);
 	}
 }
+
 void rbexpr(RB_WORD type,int w,int m){
 	if(pass==2){
 	flushrb();
@@ -135,6 +163,7 @@ void rbcomm(struct sym_rec *s,int w,int m){
 	rb_putblock(COMM_BLK,rb_block,4);
 	}
 }
+
 void rbgadd(RB_WORD type,struct sym_rec *s,int w,int m){
 	if(pass==2){
 	flushrb();
@@ -163,12 +192,20 @@ void assemble(int word,int m){
 						currentloc(),word,rb_relflag_short[m],s);
 				}
 
-				if(!rb_count)
-					startrb();
-				setrelflag(rb_block,rb_count,m);
-				rb_block[RB_HEADER_WORDS + rb_count++] = word;
-				if(rb_count == 15)
-					flushrb();
+        if(bootprog){
+          if(bootwords){
+            fputc(word>>8,obj); fputc(word,obj);
+            --bootwords;
+          }
+        }else{
+  				if(!rb_count)
+  					startrb();
+  				setrelflag(rb_block,rb_count,m);
+  				rb_block[RB_HEADER_WORDS + rb_count] = word;
+          ++rb_count;
+  				if(rb_count == 15)
+  					flushrb();
+        }
 
 				listo(currentloc(),word,m);
 			}
