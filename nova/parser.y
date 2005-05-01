@@ -52,11 +52,8 @@ void dio(struct sym_rec *s,int v){
 }
 
 void badreloc(char *op){
-	char s[100];
-	if(cond && pass==2){
-		sprintf(s,"bad relocation mode: %s",op);
-		fatal(s);
-	}
+	if(cond && pass==2)
+		fatal("bad relocation mode: %s",op);
 }
 
 void popcond(){
@@ -76,7 +73,7 @@ void pushcond(int c){
 }
 
 void ignoring(char *s){
-	warn("ignoring %s directive in bootstrap",s);
+	if(pass == 1) warn("ignoring %s directive in bootstrap",s);
 }
 
 %}
@@ -225,7 +222,7 @@ term : termnotsym
 */
 
 subexpr: term
-	| termnotsym  'B' { seenterm=0; inputradix = 10; } term { 
+	| termnotsym 'B' { seenterm=0; inputradix = 10; } term { 
 				inputradix = radix; 
 				$$.value = $1.value << (15-$4.value); 
 				$$.relmode = ABSOLUTE;
@@ -361,7 +358,7 @@ trap : TOK_TRAP ac ',' ac ',' expr
 instr: expr | noac | oneac | twoac | io | trap ;
 
 optexpr : /*empty*/ 
-	| expr { if(cond) rbexpr(START_BLK,$1.value,$1.relmode); }
+	| expr { if(!bootprog && cond) rbexpr(START_BLK,$1.value,$1.relmode); }
 	;
 
 symlist : TOK_SYM { symlist[nsyms++] = $1; } 
@@ -401,7 +398,8 @@ pseudoop :
 	| TOK_XPNG { if(cond) clean_syms(); } /* remove all nonpermanent macro and symbol definitions */
 
 	| TOK_BLK expr { /* reserve a block of storage */ 
-				if(cond){
+				if(bootprog) ignoring("BLK");
+				else if(cond){
 					flushrb(); 
 					switch(relmode){
 					case ABSOLUTE: curloc += $2.value; break;
