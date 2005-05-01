@@ -103,6 +103,7 @@ void startrb(){
 }
 
 void flushrb(){
+  if(bootprog) DPUTS("!!! flushrb() called in bootstrap");
 	if(pass==2 && rb_count){
 		DPUTS("# flushing Relocatable Data block...");
 		rb_putblock(REL_DATA_BLK,rb_block,rb_count);
@@ -146,38 +147,38 @@ void rbsymlist(RB_WORD type,int symtype,struct sym_rec *symlist[],int nsyms){
 
 void rbexpr(RB_WORD type,int w,int m){
 	if(pass==2){
-	flushrb();
-	rb_block[ RB_RELFLAGS0 ] = rb_block[ RB_RELFLAGS1 ] = rb_block[ RB_RELFLAGS2 ] = 0;
-	setrelflag(rb_block,0,m);
-	rb_block[ RB_HEADER_WORDS ] = w; /* equivalence value */
-	rb_putblock(type,rb_block,1);
+  	flushrb();
+  	rb_block[ RB_RELFLAGS0 ] = rb_block[ RB_RELFLAGS1 ] = rb_block[ RB_RELFLAGS2 ] = 0;
+  	setrelflag(rb_block,0,m);
+  	rb_block[ RB_HEADER_WORDS ] = w; /* equivalence value */
+  	rb_putblock(type,rb_block,1);
 	}
 }
 
 void rbcomm(struct sym_rec *s,int w,int m){
 	if(pass==2){
-	flushrb();
-	s->type = LABELED_COMMON;
-	rb_block[ RB_RELFLAGS0 ] = rb_block[ RB_RELFLAGS1 ] = rb_block[ RB_RELFLAGS2 ] = 0;
-	setrelflag(rb_block,0,m);
-	to_radix50(s->name,rb_block+RB_HEADER_WORDS,LABELED_COMMON);
-	rb_block[ RB_HEADER_WORDS+2 ] = 0; /* equivalence value */
-	rb_block[ RB_HEADER_WORDS+3 ] = w; /* expression value */
-	rb_putblock(COMM_BLK,rb_block,4);
+  	flushrb();
+  	s->type = LABELED_COMMON;
+  	rb_block[ RB_RELFLAGS0 ] = rb_block[ RB_RELFLAGS1 ] = rb_block[ RB_RELFLAGS2 ] = 0;
+  	setrelflag(rb_block,0,m);
+  	to_radix50(s->name,rb_block+RB_HEADER_WORDS,LABELED_COMMON);
+  	rb_block[ RB_HEADER_WORDS+2 ] = 0; /* equivalence value */
+  	rb_block[ RB_HEADER_WORDS+3 ] = w; /* expression value */
+  	rb_putblock(COMM_BLK,rb_block,4);
 	}
 }
 
 void rbgadd(RB_WORD type,struct sym_rec *s,int w,int m){
 	if(pass==2){
-	flushrb();
-	rb_block[ RB_RELFLAGS0 ] = rb_block[ RB_RELFLAGS1 ] = rb_block[ RB_RELFLAGS2 ] = 0;
-	setrelflag(rb_block,0,s->relmode);
-	rb_block[ RB_HEADER_WORDS ] = s->value; /* address */
-	to_radix50(s->name,rb_block+RB_HEADER_WORDS+1,0);
-	rb_block[ RB_HEADER_WORDS+3 ] = 0; /* equivalence value */
-	setrelflag(rb_block,1,m);
-	rb_block[ RB_HEADER_WORDS+4 ] = w; /* expression value */
-	rb_putblock(type,rb_block,5);
+  	flushrb();
+  	rb_block[ RB_RELFLAGS0 ] = rb_block[ RB_RELFLAGS1 ] = rb_block[ RB_RELFLAGS2 ] = 0;
+  	setrelflag(rb_block,0,s->relmode);
+  	rb_block[ RB_HEADER_WORDS ] = s->value; /* address */
+  	to_radix50(s->name,rb_block+RB_HEADER_WORDS+1,0);
+  	rb_block[ RB_HEADER_WORDS+3 ] = 0; /* equivalence value */
+  	setrelflag(rb_block,1,m);
+  	rb_block[ RB_HEADER_WORDS+4 ] = w; /* expression value */
+  	rb_putblock(type,rb_block,5);
 	}
 }
 	
