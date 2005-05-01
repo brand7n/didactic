@@ -67,7 +67,7 @@ unsigned long read_float(char *s,int base){
 			DPRINTF("digit:%c\n",*s);
 			if(v > ((ULONG_MAX-(*s-'0'))/base)){
 				if(infrac){
-					warning("float constant: throwing away excess precision");
+					warn("float constant: throwing away excess precision");
 					while(isdigit(s[1]))
 						++s; /* skip rest of fraction */
 					DPRINTF("skipping digits; next char=%c\n",*s);
@@ -152,13 +152,13 @@ SPACE	[ \t\0\177]
 
 [+-]?[0-9]+\.[0-9]*([eE][+-]?[0-9]+)?	{ 
 		/* single precision floating point constant */
-		warning("floating point constants not yet implemented");
+		warn("floating point constants not yet implemented");
 		//yylval.valuel = read_float(yytext,10);
 		return TOK_FPS;
 		}
 
 [+-]?[0-9]+[dD]		{ yylval.valuel = read_signed(yytext,inputradix); 
-		DPRINTF("double precision integer: \"%s\" = octal %#o = decimal %d\n",
+		DPRINTF("double precision integer: \"%s\" = octal %#lo = decimal %ld\n",
 			yytext,yylval.valuel,yylval.valuel); 
 		return TOK_NUMD ; }
 
