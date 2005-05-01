@@ -25,7 +25,7 @@ LEX = flex
 # prefer GNU bison as a parser generator, although yacc should also work
 YACC = bison -y
 
-CFLAGS += -O2 -I.
+CFLAGS += -Wall -O2 -I.
 
 OBJ_COMMON = main.o str.o error.o assign.o symtab.o object.o gpl.o list.o
 
