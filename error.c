@@ -55,3 +55,12 @@ void warn(char *fmt,...){
   va_end(v);
   err("WARNING",s);
 }
+void fatal(char *fmt,...){
+  char s[0x200];
+  va_list v;
+
+  va_start(v,fmt);
+  vsnprintf(s,0x200,fmt,v);
+  va_end(v);
+  yyerror(s);
+}
