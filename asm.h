@@ -62,7 +62,7 @@ extern int casesense,rimflag,leader,rbformat,
 extern FILE *obj;
 
 void yyerror(char*s);
-extern yyparse();
+extern int yyparse();
 
 struct sym_rec *lookup(char *s);
 void init_symtab();
@@ -70,9 +70,15 @@ void insert(struct sym_rec *p);
 void expunge();
 void clean_syms();
 struct sym_rec *dosymbol(char *text,int tok);
+void list_symbols();
+void dump_symbols();
+
+void iodata(char *mnemonic,int opcode,char **class);
+void twoac(char *mnemonic,int opcode);
+void cpu_initsyms();
 
 #define fatal yyerror
-void warning(char *s);
+void warn(char *fmt,...);
 
 void assemble(int word,int relmode);
 void setorg(int loc);
