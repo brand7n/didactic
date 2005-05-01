@@ -40,10 +40,10 @@ enum{
 };
 
 enum{ /* symbol flags */
-	F_NOAC = 0100,
+	F_NOAC  = 0100,
 	F_ONEAC = 0200,
 	F_TWOAC = 0400,
-	F_IO = 01000,
+	F_IO   = 01000,
 	F_TRAP = 02000,
 	F_SKIP = 04000
 };
