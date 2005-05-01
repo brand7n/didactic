@@ -95,7 +95,6 @@ void dump_symbols(){
 		occ,TABLE_SIZE,(100.*occ)/TABLE_SIZE,maxchain);
 }
 
-
 struct sym_rec *lookup(char *s){
 	struct sym_rec *p;
 	int idx = HASH(s);
@@ -105,12 +104,14 @@ struct sym_rec *lookup(char *s){
 			return p;
 	return 0; /* not found */
 }
+
 void insert(struct sym_rec *p){
 	int idx = HASH(p->name);
 	p->next = hash_table[idx];
 	hash_table[idx] = p;
 	/* DPRINTF("# insert symbol [%5d] \"%s\"\n",idx,p->name);*/
 }
+
 void expunge(){
 	int i;
 	struct sym_rec *p,*q;
@@ -143,12 +144,14 @@ struct sym_rec *freechain(struct sym_rec *p,int l){
 	}
 	return 0;
 }
+
 void clean_syms(){
 	int i;
 
 	for(i=0;i<TABLE_SIZE;i++)
 		hash_table[i] = freechain(hash_table[i],0);
 }
+
 struct sym_rec *dosymbol(char *yytext,int tok){ 
 	struct sym_rec *p; 
 
@@ -206,7 +209,7 @@ struct heapnode *makeheap(void){
 
 	for(i=maxlen=0;i<TABLE_SIZE;i++){
 		if(hash_table[i]){
-			for(p=hash_table[i],chain=0;p;p=p->next){
+			for(p=hash_table[i],chain=0 ; p ; p=p->next){
 				if(  /*debug ||*/  (p->flags & F_USER) ){
 					/*if(p->flags & F_ASSIGNED)*/ {
 						NEW(q);
