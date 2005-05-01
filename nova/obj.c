@@ -42,6 +42,7 @@ void initcurloc(){
   if(bootprog){
    curloc = nrel_loc = 0100;
    zrel_loc = 0;
+   relmode = ABSOLUTE;
   }else
    curloc = nrel_loc = zrel_loc = 0;
 }
@@ -52,6 +53,8 @@ int currentloc(){
 	case NORMAL_REL: return nrel_loc; 
 	case PAGE_ZERO_REL: return zrel_loc; 
 	}
+  DPRINTF("bad relmode [currentloc()]");
+  return 0;
 }
 
 void objheader(){
@@ -63,7 +66,7 @@ void objheader(){
     fputc(0377,obj); /* non-zero "synchronisation byte" */
     bootwords = words+1;
     if(bootwords > MAX_BOOTSTRAP){
-      warning("bootstrap is longer than 192 words; excess ignored");
+      warn("bootstrap is longer than 192 words; excess ignored");
       bootwords = MAX_BOOTSTRAP;
     }
     /* first word is word count including this one: */
@@ -110,7 +113,7 @@ void rbtitle(struct sym_rec *s){
 	if(pass==2){
 			flushrb();
 			if(rb_blocks)
-				warning(".TITL directive must come before assembly program");
+				warn(".TITL directive must come before assembly program");
 			else{
 				rb_block[ RB_RELFLAGS0 ] = rb_block[ RB_RELFLAGS1 ] = rb_block[ RB_RELFLAGS2 ] = 0;
 				to_radix50(s->name,rb_block+RB_HEADER_WORDS,TITLE_SYM);
