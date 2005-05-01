@@ -14,7 +14,6 @@ void dumpsym(FILE *f){
 	}
 }
 
-
 void dumprb(FILE *f){
 	RB_WORD w,header[RB_HEADER_WORDS];
 	int c,i,j,rf;
@@ -32,9 +31,8 @@ void dumprb(FILE *f){
 				/* block type 0 (must be time to stop) */
 				break;
 			}
-			printf("%s Block (%#o), %d words, checksum=%#o\n",
-				t>=2 && t<=020 ? rb_block_types[t] : "unknown",
-				t, n, header[RB_CHECKSUM] );
+			printf("=%02o= %s Block, %d words, checksum=%06o\n",
+				t, t>=2 && t<=020 ? rb_block_types[t] : "unknown", n, header[RB_CHECKSUM] );
 
 			switch(t){
 			case TITL_BLK: dumpsym(f); break;
@@ -54,7 +52,7 @@ void dumprb(FILE *f){
 			case GLOC_START_BLK:
 			case EXTN_BLK:
 			case LOCAL_SYM_BLK:
-				for( i = 0 ; i < n/3 ; ++i ){
+				for( i = 0 ; i < n/3 && !feof(f) ; ++i ){
 					rf = getrelflag(header,i);
 					printf("  [%2d] relflag=%o (%s)", i,rf,rb_relflag_short[rf]);
 					dumpsym(f);
@@ -68,7 +66,7 @@ void dumprb(FILE *f){
 			case REL_DATA_BLK:
 			case CSIZ_BLK:
 			case START_BLK:
-				for( i = 0 ; i < n ; ++i ){
+				for( i = 0 ; i < n && !feof(f) ; ++i ){
 					rf = getrelflag(header,i);
 					printf("  [%2d] relflag=%o (%s)", i,rf,rb_relflag_short[rf]);
 					w = rb_getword(f);
@@ -77,11 +75,11 @@ void dumprb(FILE *f){
 				break;
 			default:
 				puts("### unknown block type!");
-				for( i = 0 ; i < n ; ++i )
+				for( i = 0 ; i < n && !feof(f) ; ++i )
 					printf("  [%2d] %06o\n",i,rb_getword(f));
 			}
 			if(rb_checksum & RB_WORDMASK)
-				printf("### checksum error! (=%#o)\n", rb_checksum & RB_WORDMASK);
+				printf("### checksum error! (=%06o)\n", rb_checksum & RB_WORDMASK);
 			putchar('\n');
 		}
 	}
