@@ -54,7 +54,7 @@ assignval : assign | instr ;
 
 labelinstr: TOK_SYM ',' { 
         if( pass==1 && ($1->flags & F_ASSIGNED) )
-            warning("label already defined; ignoring this definition");
+            warn("label already defined; ignoring this definition");
         else 
             doassign($1,curloc,TOK_SYM,0);
 		} 

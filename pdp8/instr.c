@@ -32,10 +32,10 @@ int mri(int opcode,int mod,int addr){
 		addr,page,curpage);
 	if(page != 0){
 		if(mod & F_ZEROPAGE) 
-			warning("conflicting use of zero page modifier?");
+			warn("conflicting use of zero page modifier?");
 		opcode |= CURR_PAGE;
 		if(page != curpage) 
-			warning("illegal out-of-page reference");
+			warn("illegal out-of-page reference");
 	}
 	if(mod & F_INDIRECT)
 		opcode |= INDIRECT_MODE;
