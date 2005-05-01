@@ -103,7 +103,7 @@ void assemble(int word,int m){
 	if(pass==2){
 		if(verbose){
 			disasm(s,word);
-			printf("[%06o] = %06o  %s\n", curloc,word,m,s);
+			printf("[%06o] = %06o  %s\n", curloc,word,s);
 		}
 		putout(curloc,word);
 		listo(curloc,word,0);
