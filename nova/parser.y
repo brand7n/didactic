@@ -21,7 +21,7 @@
 #include "asm.h"
 #include "nova.h"
 
-extern int endflag,curloc,nrel_loc,zrel_loc;
+extern int endflag,curloc,nrel_loc,zrel_loc,bootprog;
 int radix,saveradix,saveinexpr,indexseen,seenterm,relmode = NORMAL_REL,
     condtop = 0,cond = 1,condstack[MAXCONDDEPTH],txtm=0,txtn=0;
 struct sym_rec *symlist[MAXSYMLIST];
@@ -73,6 +73,10 @@ void pushcond(int c){
 		condstack[condtop++] = cond;
 		cond = cond && c;
 	}
+}
+
+void ignoring(char *s){
+	warn("ignoring %s directive in bootstrap",s);
 }
 
 %}
@@ -135,7 +139,7 @@ label : TOK_SYM ':' {
 			if(cond){
 				if( $1->flags & F_ASSIGNED ){
 					if(pass==1)
-						warning("label already defined; ignoring this definition");
+						warn("label already defined; ignoring this definition");
 				}else 
 					doassign($1,currentloc(),TOK_SYM,relmode);
 			}
@@ -228,7 +232,7 @@ subexpr: term
 				if($1.relmode != ABSOLUTE || $4.relmode != ABSOLUTE) 
 					badreloc("B [both operands must be absolute]");
 				if($4.value < 0 || $4.value > 15)
-					warning("bit alignment value not in range 0-15");
+					warn("bit alignment value not in range 0-15");
 				DPUTS(" (bit align) "); 
 			}
 	| subexpr '+' {seenterm=0;} subexpr { 
@@ -336,7 +340,7 @@ oneac : TOK_ONEAC ac ',' ea {
 twoac : TOK_TWOAC opthash ac ',' ac optskip
 		{ $$.value = $1->value | $2.value | ($3.value<<13) | ($5.value<<11) | $6.value;
 		  if($2.value && !$6.value)
-			warning("invalid instruction for Nova 3 ('no load' & 'never skip')");
+			warn("invalid instruction for Nova 3 ('no load' & 'never skip')");
 		  $$.relmode = ABSOLUTE; /* ALC instruction; no address to relocate! */
 		  DPRINTF("2AC %#o acs=%o acd=%o\n",$1->value,$3.value,$5.value); }
 	;
@@ -407,40 +411,51 @@ pseudoop :
 				}
 		}
 	| TOK_NREL { /* specify NREL code relocation */
-			if(cond && relmode != NORMAL_REL){ flushrb(); relmode = NORMAL_REL; } 
+			if(bootprog) ignoring("NREL");
+			else if(cond && relmode != NORMAL_REL){ flushrb(); relmode = NORMAL_REL; } 
 		}
 	| TOK_ZREL { /* specify page zero relocation */
-			if(cond && relmode != PAGE_ZERO_REL){ flushrb(); relmode = PAGE_ZERO_REL; }
+			if(bootprog) ignoring("ZREL");
+			else if(cond && relmode != PAGE_ZERO_REL){ flushrb(); relmode = PAGE_ZERO_REL; }
 		}
 	| TOK_LOC expr { /* set the current location counter, to an absolute address */
-			if(cond){ flushrb(); relmode = ABSOLUTE; curloc = $2.value; }
+			if(bootprog) ignoring("LOC");
+			else if(cond){ flushrb(); relmode = ABSOLUTE; curloc = $2.value; }
 		}
 	
 	| TOK_COMM TOK_SYM ',' expr { /* reserve a named common area */ 
-		if(cond) rbcomm($2,$4.value,$4.relmode);
+		if(bootprog) ignoring("COMM");
+		else if(cond) rbcomm($2,$4.value,$4.relmode);
 		}
 	| TOK_CSIZ expr { /* specify an unlabelled common area */ 
-		if(cond) rbexpr(CSIZ_BLK,$2.value,$2.relmode); 
+		if(bootprog) ignoring("CSIZ");
+		else if(cond) rbexpr(CSIZ_BLK,$2.value,$2.relmode); 
 		}
 	| TOK_ENT { nsyms=0; } symlist { /* define a program entry */ 
-		if(cond) rbsymlist(ENT_BLK,ENTRY_SYM,symlist,nsyms); 
+		if(bootprog) ignoring("ENT");
+		else if(cond) rbsymlist(ENT_BLK,ENTRY_SYM,symlist,nsyms); 
 		}
 	| TOK_ENTO TOK_SYM { /* define an overlay entry */
 		symlist[0] = $2;
-		if(cond) rbsymlist(ENT_BLK,OVERLAY_SYM,symlist,1); 
+		if(bootprog) ignoring("ENTO");
+		else if(cond) rbsymlist(ENT_BLK,OVERLAY_SYM,symlist,1); 
 		}
 	| TOK_EXTD { nsyms=0; } symlist { /* define an external displacement reference */
-		if(cond) rbsymlist(EXTD_BLK,EXT_DISP_SYM,symlist,nsyms); 
+		if(bootprog) ignoring("EXTD");
+		else if(cond) rbsymlist(EXTD_BLK,EXT_DISP_SYM,symlist,nsyms); 
 		}
 	| TOK_EXTN { nsyms=0; } symlist { /* define an external normal reference */
-		if(cond) rbsymlist(EXTN_BLK,NORMAL_EXT_SYM,symlist,nsyms); 
+		if(bootprog) ignoring("EXTN");
+		else if(cond) rbsymlist(EXTN_BLK,NORMAL_EXT_SYM,symlist,nsyms); 
 		}
 	/* | TOK_EXTU { } */ /* treat undefined symbols as external displacements */
 	| TOK_GADD TOK_SYM ',' expr { /* add an expression value to an external symbol */ 
-		if(cond) rbgadd(GADD_BLK,$2,$4.value,$4.relmode);
+		if(bootprog) ignoring("GADD");
+		else if(cond) rbgadd(GADD_BLK,$2,$4.value,$4.relmode);
 		}
 	| TOK_GREF TOK_SYM ',' expr { /* add an expression value to an external symbol (0b0) */
-		if(cond) rbgadd(GREF_BLK,$2,$4.value,$4.relmode);
+		if(bootprog) ignoring("GREF");
+		else if(cond) rbgadd(GREF_BLK,$2,$4.value,$4.relmode);
 		}
 	/* | TOK_GLOC TOK_SYM { } */ /* reserve an absolute data block */ 
 	
@@ -459,13 +474,14 @@ pseudoop :
 			saveradix = radix; inputradix = 10; } 
 		expr { radix = saveradix; 
 			if($3.value < 2 || $3.value > 20)
-				warning("invalid input radix; must be >=2 and <=20");
+				warn("invalid input radix; must be >=2 and <=20");
 			else 
 				if(cond) radix = inputradix = $3.value; 
 		}
 		
 	| TOK_TITL TOK_SYM { /* entitle an RB file */ 
-		if(cond) rbtitle($2); }
+		if(bootprog) ignoring("TITL");
+		else if(cond) rbtitle($2); }
 	/*| TOK_LMIT TOK_PASS */
 	
 	| TOK_END optexpr { if(cond){ endflag = 1; YYACCEPT; } /* end of program */ }
