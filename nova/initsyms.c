@@ -225,7 +225,7 @@ struct sym_rec predefs[] = {
 	{0,0}
 };
 
-composite(char *mnemonic,char *s1,char *s2,int op,int tok){
+void composite(char *mnemonic,char *s1,char *s2,int op,int tok){
 	struct sym_rec *s;
 	char mn[40],*q;
 
@@ -270,16 +270,16 @@ char *class_c[]  = {
 	 	0},
 	 *twoac_op[8],*io_op[8],*noac_op[4],*oneac_op[4],*skips[8];
 
-iodata(char *mnemonic,int opcode,char **class){
-	char **fsuf,*p;
+void iodata(char *mnemonic,int opcode,char **class){
+	char **fsuf;
 	int f;
 
 	for( fsuf=class,f=0 ; *fsuf ; f++,fsuf++ )
 		composite(mnemonic,*fsuf,"",060000|opcode|(f<<6),TOK_IO);
 }
 
-twoac(char *mnemonic,int opcode){
-	char **csuf,**shsuf,*q;
+void twoac(char *mnemonic,int opcode){
+	char **csuf,**shsuf;
 	int c,sh;
 
 	for( csuf=class_c,c=0 ; *csuf ; c++,csuf++ )
@@ -288,7 +288,7 @@ twoac(char *mnemonic,int opcode){
 				      0100000|opcode|(sh<<6)|(c<<4),TOK_TWOAC);
 }
 
-cpu_initsyms(){
+void cpu_initsyms(){
 	struct sym_rec *p;
 
 	twoac(twoac_op[0] = "COM",0<<8);
