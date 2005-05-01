@@ -1,3 +1,5 @@
+#include <ctype.h>
+
 #include "asm.h"
 
 /* return pointer after last character of string */

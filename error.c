@@ -17,6 +17,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <stdarg.h>
+
 #include "asm.h"
 
 int errors;
@@ -25,7 +27,6 @@ extern int lasttok,listpos;
 extern char listline[];
 
 void err(char *kind,char *text){
-	char *p;
 	int i;
 
 	if(listpos){
@@ -45,6 +46,12 @@ void yyerror(char *s){
 	++errors;
 	err("ERROR",s);
 }
-void warning(char *s){
-	err("WARNING",s);
+void warn(char *fmt,...){
+  char s[0x200];
+  va_list v;
+
+  va_start(v,fmt);
+  vsnprintf(s,0x200,fmt,v);
+  va_end(v);
+  err("WARNING",s);
 }

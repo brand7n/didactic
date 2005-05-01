@@ -15,5 +15,6 @@ v1.0, 4-Sep-2002
  07-Jan-2004: 1.95 - fix failure to increment curloc on pass 1 (Nova)
  16-May-2004: 1.95r2 - fix missing files (pdp8/list.c, nova/list.c) in dist :( !
  25-Apr-2005: 1.96 - add Nova bootstrap format output (per Emil Sarlija's suggestion)
+ 01-May-2005: 1.97 - ignore directives in bootstrap(!); also fix many compiler warnings
 */
-#define VERS_STR "1.96"
+#define VERS_STR "1.97"

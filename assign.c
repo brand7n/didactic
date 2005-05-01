@@ -21,7 +21,7 @@
 
 void doassign(struct sym_rec *p,int v,int tok,int relmode){ 
 	if( pass==1 && (p->flags & F_ASSIGNED) )
-		warning("symbol redefined");
+		warn("symbol redefined");
 	p->value = v;
 	p->token = tok;
 	p->flags |= F_ASSIGNED;

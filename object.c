@@ -19,6 +19,9 @@
 
 #include "asm.h"
 
+extern void objheader();
+extern void objfooter();
+
 extern int wordmask,listing; // full word bit mask for target architecture
 //int curloc,radix,words,cksum,rimflag = 0,leader = 0;
 FILE *obj;
@@ -27,8 +30,6 @@ extern char *objsuffix;
 
 void open_out(char *fn){
 	char out[FILENAME_MAX+1];
-	FILE *fp;
-	char *q;
 	
 	strcpy(out,fn);
 	/*FIXME:strip existing suffix*/

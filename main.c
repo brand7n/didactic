@@ -71,7 +71,7 @@ Invoke with no files to use interactively.\n",s);
 }
 
 int main(int argc,char *argv[]){
-	int i,result,nfiles=0;
+	int i,nfiles=0;
 	FILE *fp;
 
 	init_symtab();
@@ -105,7 +105,7 @@ int main(int argc,char *argv[]){
 	if(nfiles){
 		if(verbose) banner();
 		for(i=1;i<argc;i++)
-			if(*argv[i] != '-')
+			if(*argv[i] != '-'){
 				if(fp = fopen(inputfile = argv[i],"r")){
 					VPRINTF("--- input: %s\n",inputfile);
 					errors = 0;
@@ -125,6 +125,7 @@ int main(int argc,char *argv[]){
 					fclose(fp);
 				}else
 					fprintf(stderr,"# can't open \"%s\"\n",inputfile);
+     }
 	}else{
 		interactive = 1;
 		banner();

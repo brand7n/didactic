@@ -125,7 +125,7 @@ void expunge(){
 	}
 }
 struct sym_rec *freechain(struct sym_rec *p,int l){
-	struct sym_rec *newnext,*q;
+	struct sym_rec *newnext;
 	if(p){
 		newnext = freechain(p->next,l+1);
 		/*while(l--) DPRINTF("  ");
@@ -145,7 +145,7 @@ struct sym_rec *freechain(struct sym_rec *p,int l){
 }
 void clean_syms(){
 	int i;
-	struct sym_rec *p,**pp,**pprevlink,*q;
+
 	for(i=0;i<TABLE_SIZE;i++)
 		hash_table[i] = freechain(hash_table[i],0);
 }
@@ -153,7 +153,8 @@ struct sym_rec *dosymbol(char *yytext,int tok){
 	struct sym_rec *p; 
 
 	if(!casesense) uppercase(yytext);
-	if(p = lookup(yytext)){
+  p = lookup(yytext);
+	if(p){
 		DPRINTF("known symbol \"%s\" = %#o (token=%d)\n", 
 			p->name,p->value,p->token);
 	}else{ /* unknown symbol */
@@ -201,7 +202,7 @@ void heapdump(struct heapnode *root){
 struct heapnode *makeheap(void){
 	struct heapnode *root = NULL,*q;
 	struct sym_rec *p;
-	int i,occ,maxchain,chain;
+	int i,chain;
 
 	for(i=maxlen=0;i<TABLE_SIZE;i++){
 		if(hash_table[i]){
