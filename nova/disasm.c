@@ -23,6 +23,8 @@
 extern char *class_sh[],*class_c[],*class_f[],
 	 *twoac_op[8],*io_op[8],*noac_op[4],*oneac_op[4],*skips[8];
 
+char *verbose_heading = " address |  word  |rel|  type |      instruction layout       |  effective address";
+
 void disasm(char *s,int word){
 						   /* no / 1ac/ 2ac / io */
 	int f1 = (word>>13)&3, /* 00 / op / acs / 11 */

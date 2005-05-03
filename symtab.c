@@ -174,6 +174,7 @@ struct sym_rec *dosymbol(char *yytext,int tok){
 	}
 	return p;
 }
+
 /* heap structure:
 		root of a tree is greater than or equal to both children.
 		left child is less than or equal to right child.
@@ -205,11 +206,11 @@ void heapdump(struct heapnode *root){
 struct heapnode *makeheap(void){
 	struct heapnode *root = NULL,*q;
 	struct sym_rec *p;
-	int i,chain;
+	int i;
 
 	for(i=maxlen=0;i<TABLE_SIZE;i++){
 		if(hash_table[i]){
-			for(p=hash_table[i],chain=0 ; p ; p=p->next){
+			for(p=hash_table[i] ; p ; p=p->next){
 				if(  /*debug ||*/  (p->flags & F_USER) ){
 					/*if(p->flags & F_ASSIGNED)*/ {
 						NEW(q);

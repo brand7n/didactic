@@ -71,6 +71,7 @@ Invoke with no files to use interactively.\n",s);
 }
 
 int main(int argc,char *argv[]){
+  extern char *verbose_heading;
 	int i,nfiles=0;
 	FILE *fp;
 
@@ -119,6 +120,7 @@ int main(int argc,char *argv[]){
 						open_out(inputfile);
 						/* do pass 2 */
 						rewind(fp);
+						if(verbose) puts(verbose_heading);
 						makepass(2,fp);
 						close_out();
 					}
