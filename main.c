@@ -21,14 +21,14 @@
 #include "version.h"
 
 extern int yydebug;
+extern FILE *listfile;
+
 int debug = 0,pass,interactive = 0,verbose = 0,listing = 0,bootprog = 0;
 char *default_out = "dpa.out",*inputfile;
 int symfile[20],symflag, /* default flags for new symbols */
 	endflag; /* parser sets this if symbol table needs to be reset */
 
 void makepass(int p,FILE *fp){
-	extern int endflag;
-
 	pass = p;
 	initcurloc();
 	words = 0;
@@ -43,7 +43,7 @@ void makepass(int p,FILE *fp){
 	flushlist();
 	DPRINTF("=== pass %d complete\n\n",p);
 	if(p==2){
-		list_symbols();
+		if(listfile) list_symbols();
 		if(verbose) dump_symbols();
 		if(endflag) clean_syms();
 		VPRINTF("# %s : %d errors, %d words\n",inputfile,errors,words);

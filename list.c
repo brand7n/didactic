@@ -27,13 +27,13 @@ FILE *listfile = NULL;
 void dolisting(int act,int leng,char *text){
 	int remain = LIST_LINE - listpos,
 	    n = leng < remain ? leng : remain;
-//	printf("--dolisting(%d,%d,\"%s\") remain=%d n=%d\n", act,leng,text,remain,n);
+	DPRINTF("--dolisting(%d,%d,\"%s\") remain=%d n=%d\n", act,leng,text,remain,n);
 
 	/* lines longer than LIST_LINE will be truncated in the listing */
 
 	if(n && act != 1){
 		lasttok = listpos;
-		strcat(listline+listpos,text);
+		strncat(listline+listpos,text,n);
 		listpos += n;
 	}
 }
