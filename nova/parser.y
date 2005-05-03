@@ -358,7 +358,12 @@ trap : TOK_TRAP ac ',' ac ',' expr
 instr: expr | noac | oneac | twoac | io | trap ;
 
 optexpr : /*empty*/ 
-	| expr { if(!bootprog && cond) rbexpr(START_BLK,$1.value,$1.relmode); }
+	| expr { 
+		if(bootprog)
+			ignoring("END <start-loc>");
+		else if(cond) 
+			rbexpr(START_BLK,$1.value,$1.relmode); 
+		}
 	;
 
 symlist : TOK_SYM { symlist[nsyms++] = $1; } 
