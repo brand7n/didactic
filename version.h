@@ -16,5 +16,6 @@ v1.0, 4-Sep-2002
  16-May-2004: 1.95r2 - fix missing files (pdp8/list.c, nova/list.c) in dist :( !
  25-Apr-2005: 1.96 - add Nova bootstrap format output (per Emil Sarlija's suggestion)
  01-May-2005: 1.97 - ignore directives in bootstrap(!); also fix many compiler warnings
+ 03-May-2005: 1.98 - fix possible overflow crash in listing code
 */
-#define VERS_STR "1.97"
+#define VERS_STR "1.98"
