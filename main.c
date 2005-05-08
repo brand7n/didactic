@@ -45,7 +45,7 @@ void makepass(int p,FILE *fp){
 	if(p==2){
 		if(listfile) list_symbols();
 		if(verbose) dump_symbols();
-		if(endflag) clean_syms();
+		/*if(endflag)*/ clean_syms();
 		VPRINTF("# %s : %d errors, %d words\n",inputfile,errors,words);
 	}
 }

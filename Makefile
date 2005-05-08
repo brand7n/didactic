@@ -113,7 +113,7 @@ $(DISTARCHIVE) : $(SRC)
 	ls -l $@
 
 test: p8a dga nova/dumprb
-	#./p8a -v pdp8/examples/*.pal
+	./p8a -v pdp8/examples/*.pal
 	./dga -v -l -s nova/rdos/osid.sr nova/examples/hello2.sr
 	nova/dumprb nova/examples/hello2.sr.rb
 
