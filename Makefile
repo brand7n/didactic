@@ -99,7 +99,8 @@ clean:
 	rm -f $(PROGRAMS) $(OBJ_COMMON) $(OBJ_NOVA) $(OBJ_PDP8) \
 		pdp8/parser.tab.[ch] pdp8/y.tab.[ch] pdp8/lexer.c \
 		nova/parser.tab.[ch] nova/y.tab.[ch] nova/lexer.c \
-		core
+		core \
+		pdp8/examples/*.pal.* nova/examples/*.sr.*
 
 dist : $(DISTARCHIVE)
 
