@@ -17,5 +17,6 @@ v1.0, 4-Sep-2002
  25-Apr-2005: 1.96 - add Nova bootstrap format output (per Emil Sarlija's suggestion)
  01-May-2005: 1.97 - ignore directives in bootstrap(!); also fix many compiler warnings
  03-May-2005: 1.98 - fix possible overflow crash in listing code
+ 07-May-2005: 1.99 - minor cleanups, most importantly, always clean symbols after each file
 */
-#define VERS_STR "1.98"
+#define VERS_STR "1.99"
