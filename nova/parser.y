@@ -352,7 +352,7 @@ io : TOK_IO iooperand {
 trap : TOK_TRAP ac ',' ac ',' expr
 		{ $$.value = $1->value | ($2.value<<13) | ($4.value<<11) | ($6.value<<4);
 		  $$.relmode = ABSOLUTE;
-		  DPRINTF("TRAP %#o acs=%o acd=%o trap=%#o\n",$1->value,$2,$4,$6); }
+		  DPRINTF("TRAP %#o acs=%o acd=%o trap=%#o\n",$1->value,$2.value,$4.value,$6.value); }
 	;
 
 instr: expr | noac | oneac | twoac | io | trap ;

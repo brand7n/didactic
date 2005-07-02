@@ -97,7 +97,7 @@ SPACE	[ \t\0\177]
 
 %%
 
-[\n\r\f]	{ ++lineno; return TOK_SEP; } 
+\n|\r|\r\n|\f	{ ++lineno; return TOK_SEP; } 
 
 {SPACE}+	; /* whitespace */
 

@@ -23,6 +23,8 @@
 extern int yydebug;
 extern FILE *listfile;
 
+extern void yyrestart(FILE*);
+
 int debug = 0,pass,interactive = 0,verbose = 0,listing = 0,bootprog = 0;
 char *default_out = "dpa.out",*inputfile;
 int symfile[20],symflag, /* default flags for new symbols */

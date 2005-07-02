@@ -41,7 +41,7 @@ void yyrestart(FILE *fp){
 
 %%
 
-[\f\n\r]		{ ++lineno; return TOK_SEP; } 
+\n|\r|\r\n|\f		{ ++lineno; return TOK_SEP; } 
 
 [ \t]+	; /* whitespace */
 
