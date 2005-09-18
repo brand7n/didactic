@@ -16,7 +16,7 @@ void dumpsym(FILE *f){
 
 void dumprb(FILE *f){
 	RB_WORD w,header[RB_HEADER_WORDS];
-	int c,i,j,rf;
+	int c,i,rf;
 
 	/* skip zero bytes at beginning of file */
 	while( !(c = fgetc(f)) )

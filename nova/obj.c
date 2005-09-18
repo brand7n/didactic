@@ -114,7 +114,7 @@ void rbtitle(struct sym_rec *s){
 	if(pass==2){
 			flushrb();
 			if(rb_blocks)
-				warn(".TITL directive must come before assembly program");
+				warn(".TITL directive must precede assembly program");
 			else{
 				rb_block[ RB_RELFLAGS0 ] = rb_block[ RB_RELFLAGS1 ] = rb_block[ RB_RELFLAGS2 ] = 0;
 				to_radix50(s->name,rb_block+RB_HEADER_WORDS,TITLE_SYM);

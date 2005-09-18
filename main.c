@@ -69,7 +69,7 @@ void usage(char *s){
        -w : show warranty\n\
        -c : show copyright\n\
        -h : show this help\n\
-Invoke with no files to use interactively.\n",s);
+Invoke with no source files to use interactively.\n",s);
 }
 
 int main(int argc,char *argv[]){

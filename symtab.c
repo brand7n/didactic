@@ -26,22 +26,23 @@
 //#define HASH(s) (fnv_32_str(s,FNV1_32_INIT) % TABLE_SIZE)
 #define HASH(s) (djb2(s) % TABLE_SIZE)
 
-struct sym_rec *hash_table[TABLE_SIZE];
-extern struct sym_rec predefs[];
-extern int symflag;
-
 struct heapnode{
 	struct heapnode *left,*right;
 	struct sym_rec *sym;
 };
 struct heapnode *makeheap(void);
+struct sym_rec *hash_table[TABLE_SIZE];
+unsigned maxlen;
+
+extern struct sym_rec predefs[];
+extern int symflag;
 
 // hash function recommended by Ozan Yigit 
 // http://www.cs.yorku.ca/~oz/hash.html
 // "this algorithm (k=33) was first reported by dan bernstein"
 unsigned long djb2(unsigned char *str){
 	unsigned long hash = 5381;
-	int c;
+	unsigned c;
 
 	while (c = *str++)
 		hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
@@ -97,7 +98,7 @@ void dump_symbols(){
 
 struct sym_rec *lookup(char *s){
 	struct sym_rec *p;
-	int idx = HASH(s);
+	unsigned idx = HASH(s);
 	/* DPRINTF("# lookup \"%s\" hash=%5d\n",s,idx); */
 	for(p=hash_table[idx];p;p=p->next)
 		if(!strcmp(s,p->name))
@@ -106,7 +107,7 @@ struct sym_rec *lookup(char *s){
 }
 
 void insert(struct sym_rec *p){
-	int idx = HASH(p->name);
+	unsigned idx = HASH(p->name);
 	p->next = hash_table[idx];
 	hash_table[idx] = p;
 	/* DPRINTF("# insert symbol [%5d] \"%s\"\n",idx,p->name);*/
@@ -193,7 +194,6 @@ struct heapnode *heapinsert(struct heapnode *root,struct heapnode *newnode){
 	return root;
 }
 
-int maxlen;
 void heapdump(struct heapnode *root){
 	if(root){
 		heapdump(root->left);

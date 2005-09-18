@@ -28,10 +28,13 @@
 
 #define yywrap() 1
 
-int inputradix,pageno,lineno,casesense = 0,txttok;
-char delim; /* string delimiter for current TXT directive */
 extern int seenterm,symflag;
 extern unsigned char eparity[],oparity[]; /* lookup tables for parity */
+extern int txtm,txtn;
+
+int inputradix,pageno,lineno,casesense = 0,txttok;
+char delim; /* string delimiter for current TXT directive */
+int nchars,strbuf[2];
 
 #ifndef FLEX_SCANNER
 void yyrestart(FILE *fp){
@@ -39,10 +42,6 @@ void yyrestart(FILE *fp){
 	yyin = fp;
 }
 #endif
-
-
-int nchars,strbuf[2];
-extern int txtm,txtn;
 
 void stringchar(int c){
 	strbuf[nchars++] = c;

@@ -18,14 +18,14 @@
 # public domain FNV hash library used with permission
 # see http://www.isthe.com/chongo/tech/comp/fnv/
 
-# the assembler requires features of GNU flex 
-# not available in traditional lex, including exclusive start conditions, and YY_USER_ACTION
+# lexer requires features of GNU flex 
+# including exclusive start conditions, and YY_USER_ACTION
 LEX = flex
 
 # prefer GNU bison as a parser generator, although yacc should also work
 YACC = bison -y
 
-CFLAGS += -Wall -I.
+CFLAGS += -O2 -W -Wall -I.
 
 OBJ_COMMON = main.o str.o error.o assign.o symtab.o object.o gpl.o list.o
 
@@ -36,9 +36,7 @@ OBJ_NOVA = nova/lexer.o nova/parser.tab.o nova/obj.o nova/list.o \
 	nova/initsyms.o nova/instr.o nova/disasm.o \
 	nova/partables.o nova/rb.o nova/radix50.o
 
-PROGRAMS = p8a dga 
-
-DISTARCHIVE = dpa-src.tar.gz
+PROGRAMS = p8a dga
 
 all : $(PROGRAMS) 
 
@@ -85,33 +83,12 @@ pdp8/lexer.o : pdp8/lexer.l pdp8/parser.tab.c asm.h pdp8.h
 pdp8/parser.tab.o : pdp8/parser.y asm.h pdp8.h
 pdp8/predefs.c : asm.h pdp8/parser.tab.c pdp8.h
 
-SRC = COPYING README BUGS Makefile \
-	asm.h nova.h pdp8.h version.h \
-	main.c str.c error.c assign.c symtab.c object.c gpl.c list.c \
-	pdp8/lexer.l pdp8/parser.y pdp8/initsyms.c pdp8/predefs.c pdp8/list.c \
-	pdp8/instr.c pdp8/disasm.c pdp8/obj.c pdp8/examples/*.pal \
-	nova/lexer.l nova/parser.y nova/initsyms.c nova/predefs.c nova/list.c \
-	nova/instr.c nova/disasm.c nova/examples/*.sr nova/parity.c nova/obj.c \
-	nova/rb.[ch] nova/dumprb.c nova/radix50.c nova/Makefile nova/rdos/*.sr \
-	nova/arch_notes.txt nova/using_simh.txt
-
 clean: 
 	rm -f $(PROGRAMS) $(OBJ_COMMON) $(OBJ_NOVA) $(OBJ_PDP8) \
 		pdp8/parser.tab.[ch] pdp8/y.tab.[ch] pdp8/lexer.c \
 		nova/parser.tab.[ch] nova/y.tab.[ch] nova/lexer.c \
 		core \
 		pdp8/examples/*.pal.* nova/examples/*.sr.*
-
-dist : $(DISTARCHIVE)
-
-$(DISTARCHIVE) : $(SRC)
-	rm -fr /tmp/dpa-src
-	mkdir /tmp/dpa-src 
-	tar -cf - $(SRC) | tar -C /tmp/dpa-src -xf -
-	tar -C /tmp -czf /tmp/$@ dpa-src
-	cd /tmp/dpa-src ; make all 
-	mv /tmp/$@ .
-	ls -l $@
 
 test: p8a dga nova/dumprb
 	./p8a -v pdp8/examples/*.pal

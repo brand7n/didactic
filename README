@@ -24,7 +24,9 @@ assembler may lend itself to learning, extension and modification by
 interested parties. While I do not own a PDP-8 (more's the pity), this
 architecture was chosen partly for its similarity to another DeCastro design,
 the DG Nova 3. The project was mainly inspired by my friend Emil Sarlija 
-( http://www.chookfest.net/ ) who owns a Nova 3 and needed an assembler for it.
+( http://www.chookfest.net/ ) who owns two Nova 3 computers and needed an assembler.
+
+PDP-8
 
 The PDP-8 assembler ("p8a") input syntax is compatible with the assembler 
 described in the "PAL III Symbolic Assembler PDP-8 Programming Manual,"
@@ -41,6 +43,7 @@ The "verbose" mode (-v) includes a disassembler with a "diagrammatic" output
 format designed to show each instruction's physical layout (in particular
 the microcoded instructions).
 
+DG NOVA
 
 An assembler for DG Nova architecture is also included. This follows the
 User's Manual (Programmer's Reference) for the DG Nova range of computers.
@@ -52,12 +55,10 @@ Nova bootstrap format is also supported with the -b flag;
 this is program of up to 191 words assembled at an absolute origin of 0100
 (see Nova Programmer's Reference, page VI-7, for more details).
 
+Notes on building
 
 This program has been built and tested under NetBSD 1.5/SPARC, 
 Linux/Alpha (Debian 2.2), OS X 10.2,3,4 (PowerPC G4), NEXTSTEP 3.3/HPPA.
-
-
-Notes on building
 
 1. GNU make is required 
 2. flex ( http://www.gnu.org/directory/flex.html ) is required, 

@@ -24,12 +24,12 @@
 char target_arch[] = "DG NOVA";
 int rbformat = 1;
 
-#define NOAC(m,op) {0,m,op<<11,TOK_NOAC,F_NONE}
-#define ONEAC(m,op) {0,m,op<<13,TOK_ONEAC,F_NONE}
-#define IO(m,op,c,d) {0,m,060000|(op<<8)|(c<<6)|d,TOK_IO,F_NONE}
-#define SYM(m,v) {0,m,v,TOK_SYM,F_NONE}
-#define SKIP(m,v) {0,m,v,TOK_SKIP,F_NONE}
-#define PSEUDO(m,t) {0,m,0,t,F_NONE}
+#define NOAC(m,op)   {0,m,op<<11,TOK_NOAC,F_NONE,0,0,0,0}
+#define ONEAC(m,op)  {0,m,op<<13,TOK_ONEAC,F_NONE,0,0,0,0}
+#define IO(m,op,c,d) {0,m,060000|(op<<8)|(c<<6)|d,TOK_IO,F_NONE,0,0,0,0}
+#define SYM(m,v)     {0,m,v,TOK_SYM,F_NONE,0,0,0,0}
+#define SKIP(m,v)    {0,m,v,TOK_SKIP,F_NONE,0,0,0,0}
+#define PSEUDO(m,t)  {0,m,0,t,F_NONE,0,0,0,0}
 
 enum{
 	DEV_STACK=01,
@@ -62,7 +62,7 @@ struct sym_rec predefs[] = {
 	NOAC("JSR",1),
 	NOAC("ISZ",2),
 	NOAC("DSZ",3),
-	{0,"TRAP",0100010,TOK_TRAP,F_NONE,0}, /* a special 2-ac instruction */
+	{0,"TRAP",0100010,TOK_TRAP,F_NONE,0,0,0,0}, /* a special 2-ac instruction */
 	IO("INTEN",0,1,DEV_CPU),
 	IO("INTDS",0,2,DEV_CPU),
 	IO("READS",1,0,DEV_CPU),/*FIXME:not sure what implicit F should be for these? */
@@ -222,7 +222,7 @@ struct sym_rec predefs[] = {
 	PSEUDO(".LOC",TOK_LOC),
 	PSEUDO(".",TOK_DOT), /* symbol means: value of the location counter */
 
-	{0,0}
+	{0,0,0,0,0,0,0,0,0}
 };
 
 void composite(char *mnemonic,char *s1,char *s2,int op,int tok){

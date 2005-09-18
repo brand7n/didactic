@@ -42,10 +42,12 @@ void err(char *kind,char *text){
 	fprintf(stderr,"# %s: %s @ line %d, %s\n",
 		kind,inputfile,lineno,text);
 }
+
 void yyerror(char *s){
 	++errors;
 	err("ERROR",s);
 }
+
 void warn(char *fmt,...){
   char s[0x200];
   va_list v;
@@ -55,6 +57,7 @@ void warn(char *fmt,...){
   va_end(v);
   err("WARNING",s);
 }
+
 void fatal(char *fmt,...){
   char s[0x200];
   va_list v;

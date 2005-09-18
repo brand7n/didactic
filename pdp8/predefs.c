@@ -21,9 +21,9 @@
 #include "pdp8.h"
 #include "parser.tab.h"
 
-#define MRI(S,V) {NULL,S,V,TOK_MRI,F_MRI,0}
-#define NM(S,V)  {NULL,S,V,TOK_SYM,0,0}
-#define PSEUDO(S,T)  {NULL,S,0,T,0,0}
+#define MRI(S,V)    {NULL,S,V,TOK_MRI,F_MRI,0,0,0,0}
+#define NM(S,V)     {NULL,S,V,TOK_SYM,0,0,0,0,0}
+#define PSEUDO(S,T) {NULL,S,0,T,0,0,0,0,0}
 #define IOT NM
 #define IOT1 IOT /* FIXME: IOT1 instructions take one operand */
 
@@ -270,5 +270,5 @@ struct sym_rec predefs[] = {
 	IOT("VBA", 06534),
 	IOT("VSCC",06571),
 
-	{0,0,0,0,0} /* mark end of table */
+	{0,0,0,0,0,0,0,0,0} /* mark end of table */
 };
