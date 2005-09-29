@@ -23,7 +23,7 @@
 extern char *class_sh[],*class_c[],*class_f[],
 	 *twoac_op[8],*io_op[8],*noac_op[4],*oneac_op[4],*skips[8];
 
-char *verbose_heading = " address |  word  |rel|  type |      instruction layout       |  effective address";
+char *verbose_heading = " address |  word  |rel|  type |      instruction layout       |  effective addr";
 
 void disasm(char *s,int word){
 						   /* no / 1ac/ 2ac / io */
@@ -42,7 +42,7 @@ void disasm(char *s,int word){
 				f2,io_op[f3],class_f[(word>>6)&3],word&077);
 		else{ /* one accumulator - effective address */	
 			char ind[10],eastr[40],sign = ' ',
-				 *type[]={"page zero","relative","index AC2","index AC3"};
+				 *type[]={"pg0","rel","+AC2","+AC3"};
 			int ea,disp = word & 0377,
 				signeddisp = (disp>127 ? disp-256 : disp),
 				index = f3&3;
@@ -54,11 +54,11 @@ void disasm(char *s,int word){
 			else{
 				ea = signeddisp;
 				sign = signeddisp<0 ? '-' : '+';
-				sprintf(ind,"AC%c",index+'0');
+				//sprintf(ind,"AC%c",index+'0');
 			}
-			sprintf(eastr,"|%c| %o |      %03o      |  E=%c%s%c%#o (%s)",
+			sprintf(eastr,"|%c| %o |      %03o      | E=%c%c%#6o %s",
 				word&NOAC_INDIRECT?'@':' ',index,disp,
-				word&NOAC_INDIRECT?'@':' ',ind,sign,abs(ea),type[index]);
+				word&NOAC_INDIRECT?'@':' ',sign,abs(ea),type[index]);
 			if(f1)
 				sprintf(s,"1AC: |0|%s| %o %s",oneac_op[f1],f2,eastr);
 			else

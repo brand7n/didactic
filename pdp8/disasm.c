@@ -26,7 +26,7 @@ char *opcodes[]={"AND","TAD","ISZ","DCA","JMS","JMP","IOT","OPR"},
      *group2_1[]={"CLA","SPA","SNA","SZL","---","OSR","HLT","???"},
      *iot[0100][3];
 
-char *verbose_heading = " address |  word   | opcode         instruction layout         |  effective address";
+char *verbose_heading = " address |  word   | opcode         instruction layout         | effective addr";
 
 struct iotdev_rec{
 	int devsel;
