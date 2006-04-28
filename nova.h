@@ -23,6 +23,7 @@
 
 /* instruction bit masks */
 enum{
+	INDIR_DATA = 0100000,
 	OPCODE = 0160000,
 /* no accumulator - effective address */
 	NOAC_OPCODE = 014000,

@@ -32,7 +32,7 @@ extern int seenterm,symflag;
 extern unsigned char eparity[],oparity[]; /* lookup tables for parity */
 extern int txtm,txtn;
 
-int inputradix,pageno,lineno,casesense = 0,txttok;
+int inputradix,pageno,lineno,casesense = 0,txttok,indirect = 0;
 char delim; /* string delimiter for current TXT directive */
 int nchars,strbuf[2];
 
@@ -99,6 +99,8 @@ SPACE	[ \t\0\177]
 \n|\r|\r\n|\f	{ ++lineno; return TOK_SEP; } 
 
 {SPACE}+	; /* whitespace */
+
+@	{ indirect = 1; } /* otherwise ignored */
 
 \;[^\n\r\f]*	; /* comment */
 
@@ -185,6 +187,6 @@ SPACE	[ \t\0\177]
 "<="	return TOK_LE;
 "<>"	return TOK_NE;
 
-[\-+.*,=@#:/<>&!()]	return yytext[0]; 
+[\-+.*,=#:/<>&!()]	return yytext[0]; 
 
 .		printf("illegal character:'%c'\n",yytext[0]);

@@ -21,7 +21,7 @@
 #include "asm.h"
 #include "nova.h"
 
-extern int endflag,curloc,nrel_loc,zrel_loc,bootprog;
+extern int endflag,curloc,nrel_loc,zrel_loc,bootprog,indirect;
 int radix,saveradix,saveinexpr,indexseen,seenterm,relmode = NORMAL_REL,
     condtop = 0,cond = 1,condstack[MAXCONDDEPTH],txtm=0,txtn=0;
 struct sym_rec *symlist[MAXSYMLIST];
@@ -106,7 +106,7 @@ void ignoring(char *s){
 %token <string> TOK_STRING
 %type <value> term termnotsym
 %type <value> expr subexpr instr assign iooperand assignval asminstr
-%type <value> noac oneac twoac io trap opthash optskip optindex optind ac ea
+%type <value> noac oneac twoac io trap opthash optskip optindex ac ea
 %type <symbol> symlist textop 
 %type <value> pseudoop /*FIXME?*/
 
@@ -117,8 +117,8 @@ void ignoring(char *s){
 %% /* grammar rules */
 
 program: /* empty */ 
-	| program stmt TOK_SEP { flushlist(); }
-	| error TOK_SEP { flushlist(); yyerrok; } 
+	| program stmt TOK_SEP { indirect = 0; flushlist(); }
+	| error TOK_SEP        { indirect = 0; flushlist(); yyerrok; } 
 					/* on error, skip to end of statement and recover */
 	;
 
@@ -155,9 +155,6 @@ stmt: /*empty*/
 
 ac : expr { $$.value = $1.value & 3; 
 			if(cond && $1.value>3) fatal("no such accumulator"); }
-	;
-optind : /* empty */ { $$.value = 0; }
-	| '@' { $$.value = NOAC_INDIRECT; DPUTS("-- saw @"); }
 	;
 opthash : /* empty */ { $$.value = 0; }
 	| '#' { $$.value = TWOAC_NOLOAD; DPUTS("-- saw #"); }
@@ -322,9 +319,9 @@ subexpr: term
 expr : subexpr { seenterm = 0; }
 	;
 
-ea : optind expr optindex { 
-				$$ = $2;
-				$$.value = ea($3.value,indexseen,&($$)) | $1.value; }
+ea : expr optindex { 
+				$$ = $1;
+				$$.value = ea($2.value,indexseen,&($$)); }
 	;
 noac : TOK_NOAC ea { 
 				$$.value = $1->value | $2.value; 
@@ -355,7 +352,12 @@ trap : TOK_TRAP ac ',' ac ',' expr
 		  DPRINTF("TRAP %#o acs=%o acd=%o trap=%#o\n",$1->value,$2.value,$4.value,$6.value); }
 	;
 
-instr: expr | noac | oneac | twoac | io | trap ;
+instr: expr { $$.value = indirect ? $1.value | INDIR_DATA : $1.value; }
+	| noac  { $$.value = indirect ? $1.value | NOAC_INDIRECT : $1.value; }
+	| oneac { $$.value = indirect ? $1.value | NOAC_INDIRECT : $1.value; }
+	| twoac 
+	| io 
+	| trap ;
 
 optexpr : /*empty*/ 
 	| expr { 

@@ -84,7 +84,8 @@ pdp8/parser.tab.o : pdp8/parser.y asm.h pdp8.h
 pdp8/predefs.c : asm.h pdp8/parser.tab.c pdp8.h
 
 clean: 
-	rm -f $(PROGRAMS) $(OBJ_COMMON) $(OBJ_NOVA) $(OBJ_PDP8) \
+	rm -f $(PROGRAMS) nova/parity nova/partables.c nova/dumprb \
+		$(OBJ_COMMON) $(OBJ_NOVA) $(OBJ_PDP8) \
 		pdp8/parser.tab.[ch] pdp8/y.tab.[ch] pdp8/lexer.c \
 		nova/parser.tab.[ch] nova/y.tab.[ch] nova/lexer.c \
 		core \
