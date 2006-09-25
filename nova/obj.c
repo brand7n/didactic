@@ -114,17 +114,17 @@ void flushrb(){
 
 void rbtitle(struct sym_rec *s){
 	if(pass==2){
-			flushrb();
-			if(rb_blocks)
-				warn(".TITL directive must precede assembly program");
-			else{
-				rb_block[ RB_RELFLAGS0 ] = 
-				rb_block[ RB_RELFLAGS1 ] = 
-				rb_block[ RB_RELFLAGS2 ] = 0;
-				to_radix50(s->name,rb_block+RB_HEADER_WORDS,TITLE_SYM);
-				rb_block[ RB_HEADER_WORDS+2 ] = 0; /* equivalence value */
-				rb_putblock(TITL_BLK,rb_block,3);
-			}
+		flushrb();
+		if(rb_blocks)
+			warn(".TITL directive must precede assembly program");
+		else{
+			rb_block[ RB_RELFLAGS0 ] = 
+			rb_block[ RB_RELFLAGS1 ] = 
+			rb_block[ RB_RELFLAGS2 ] = 0;
+			to_radix50(s->name,rb_block+RB_HEADER_WORDS,TITLE_SYM);
+			rb_block[ RB_HEADER_WORDS+2 ] = 0; /* equivalence value */
+			rb_putblock(TITL_BLK,rb_block,3);
+		}
 	}
 }
 
@@ -199,37 +199,37 @@ void assemble(int word,int m){
 	extern int cond;
 
 	if(cond){
-			word &= wordmask;
+		word &= wordmask;
 
-			if(pass==2){
-				if(verbose){
-					disasm(s,word);
-					printf("[%06o] = %06o (%s)  %s\n", 
-					       currentloc(),word,rb_relflag_short[m],s);
-				}
-
-				if(bootprog){
-					if(bootwords){
-						fputc(word>>8,obj); fputc(word,obj);
-						--bootwords;
-					}
-				}else{
-					if(!rb_count)
-						startrb();
-					setrelflag(rb_block,rb_count,m);
-					rb_block[RB_HEADER_WORDS + rb_count] = word;
-					++rb_count;
-					if(rb_count == 15)
-						flushrb();
-				}
-
-				listo(currentloc(),word,m);
+		if(pass==2){
+			if(verbose){
+				disasm(s,word);
+				printf("[%06o] = %06o (%s)  %s\n", 
+					   currentloc(),word,rb_relflag_short[m],s);
 			}
-			switch(relmode){
-			case ABSOLUTE: ++curloc; break;
-			case NORMAL_REL: ++nrel_loc; break;
-			case PAGE_ZERO_REL: ++zrel_loc; break;
+
+			if(bootprog){
+				if(bootwords){
+					fputc(word>>8,obj); fputc(word,obj);
+					--bootwords;
+				}
+			}else{
+				if(!rb_count)
+					startrb();
+				setrelflag(rb_block,rb_count,m);
+				rb_block[RB_HEADER_WORDS + rb_count] = word;
+				++rb_count;
+				if(rb_count == 15)
+					flushrb();
 			}
-			++words;
+
+			listo(currentloc(),word,m);
+		}
+		switch(relmode){
+		case ABSOLUTE: ++curloc; break;
+		case NORMAL_REL: ++nrel_loc; break;
+		case PAGE_ZERO_REL: ++zrel_loc; break;
+		}
+		++words;
 	}else flushlist();
 }
