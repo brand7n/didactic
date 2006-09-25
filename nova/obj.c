@@ -39,12 +39,12 @@ static RB_WORD rb_block[ RB_HEADER_WORDS + 3*15 ];
 static int rb_count = 0,rb_blocks = 0;
 
 void initcurloc(){
-  if(bootprog){
-   curloc = nrel_loc = 0100;
-   zrel_loc = 0;
-   relmode = ABSOLUTE;
-  }else
-   curloc = nrel_loc = zrel_loc = 0;
+	if(bootprog){
+		curloc = nrel_loc = 0100;
+		zrel_loc = 0;
+		relmode = ABSOLUTE;
+	}else
+		curloc = nrel_loc = zrel_loc = 0;
 }
 
 int currentloc(){
@@ -53,32 +53,32 @@ int currentloc(){
 	case NORMAL_REL: return nrel_loc; 
 	case PAGE_ZERO_REL: return zrel_loc; 
 	}
-  DPRINTF("bad relmode [currentloc()]");
-  return 0;
+	DPRINTF("bad relmode [currentloc()]");
+	return 0;
 }
 
 void objheader(){
-  int i;
+	int i;
 
-  if(bootprog){
-    for(i=15;i--;) 
-      fputc(0,obj); /* 7 words & 1 byte of nominal leader */
-    fputc(0377,obj); /* non-zero "synchronisation byte" */
-    bootwords = words+1;
-    if(bootwords > MAX_BOOTSTRAP){
-      warn("bootstrap is longer than 192 words; excess ignored");
-      bootwords = MAX_BOOTSTRAP;
-    }
-    /* first word is word count including this one: */
-    fputc((-bootwords)>>8,obj); fputc(-bootwords,obj);
-    --bootwords;
-  }else
-    rb_blocks = rb_count = 0;
+	if(bootprog){
+		for(i=15;i--;) 
+			fputc(0,obj); /* 7 words & 1 byte of nominal leader */
+		fputc(0377,obj); /* non-zero "synchronisation byte" */
+		bootwords = words+1;
+		if(bootwords > MAX_BOOTSTRAP){
+			warn("bootstrap is longer than 192 words; excess ignored");
+			bootwords = MAX_BOOTSTRAP;
+		}
+		/* first word is word count including this one: */
+		fputc((-bootwords)>>8,obj); fputc(-bootwords,obj);
+		--bootwords;
+	}else
+		rb_blocks = rb_count = 0;
 }
 
 void objfooter(){
 	if(!bootprog)
-    flushrb();
+		flushrb();
 }
 
 void rb_putblock(RB_WORD type,RB_WORD b[],int n){
@@ -96,14 +96,16 @@ void rb_putblock(RB_WORD type,RB_WORD b[],int n){
 }
 
 void startrb(){
-	rb_block[ RB_RELFLAGS0 ] = rb_block[ RB_RELFLAGS1 ] = rb_block[ RB_RELFLAGS2 ] = 0;
+	rb_block[ RB_RELFLAGS0 ] = 
+	rb_block[ RB_RELFLAGS1 ] = 
+	rb_block[ RB_RELFLAGS2 ] = 0;
 	rb_block[ RB_HEADER_WORDS ] = currentloc();
 	setrelflag(rb_block,0,relmode);
 	rb_count = 1;
 }
 
 void flushrb(){
-  if(bootprog) DPUTS("!!! flushrb() called in bootstrap");
+	if(bootprog) DPUTS("!!! flushrb() called in bootstrap");
 	if(pass==2 && rb_count){
 		DPUTS("# flushing Relocatable Data block...");
 		rb_putblock(REL_DATA_BLK,rb_block,rb_count);
@@ -116,7 +118,9 @@ void rbtitle(struct sym_rec *s){
 			if(rb_blocks)
 				warn(".TITL directive must precede assembly program");
 			else{
-				rb_block[ RB_RELFLAGS0 ] = rb_block[ RB_RELFLAGS1 ] = rb_block[ RB_RELFLAGS2 ] = 0;
+				rb_block[ RB_RELFLAGS0 ] = 
+				rb_block[ RB_RELFLAGS1 ] = 
+				rb_block[ RB_RELFLAGS2 ] = 0;
 				to_radix50(s->name,rb_block+RB_HEADER_WORDS,TITLE_SYM);
 				rb_block[ RB_HEADER_WORDS+2 ] = 0; /* equivalence value */
 				rb_putblock(TITL_BLK,rb_block,3);
@@ -128,18 +132,20 @@ void rbsymlist(RB_WORD type,int symtype,struct sym_rec *symlist[],int nsyms){
 	int i;
 	if(pass==2){
 		flushrb();
-		rb_block[ RB_RELFLAGS0 ] = rb_block[ RB_RELFLAGS1 ] = rb_block[ RB_RELFLAGS2 ] = 0;
+		rb_block[ RB_RELFLAGS0 ] = 
+		rb_block[ RB_RELFLAGS1 ] = 
+		rb_block[ RB_RELFLAGS2 ] = 0;
 		DPRINTF("rbsymlist: %d symbols\n",nsyms);
 		for( i = 0 ; i < nsyms ; ++i ){
-				DPRINTF("symbol \"%s\" value=%#o relmode=%o\n",
-					symlist[i]->name,symlist[i]->value,symlist[i]->relmode);
-				if(symtype == ENTRY_SYM || symtype == OVERLAY_SYM
-				   || symtype == EXT_DISP_SYM || symtype == NORMAL_EXT_SYM )
-					symlist[i]->type = symtype;
-				   
-				setrelflag(rb_block,i,symlist[i]->relmode);
-				to_radix50(symlist[i]->name,rb_block+RB_HEADER_WORDS+i*3,symtype);
-				rb_block[RB_HEADER_WORDS+i*3+2] = symlist[i]->value;
+			DPRINTF("symbol \"%s\" value=%#o relmode=%o\n",
+				symlist[i]->name,symlist[i]->value,symlist[i]->relmode);
+			if(symtype == ENTRY_SYM || symtype == OVERLAY_SYM
+			   || symtype == EXT_DISP_SYM || symtype == NORMAL_EXT_SYM)
+				symlist[i]->type = symtype;
+
+			setrelflag(rb_block,i,symlist[i]->relmode);
+			to_radix50(symlist[i]->name,rb_block+RB_HEADER_WORDS+i*3,symtype);
+			rb_block[RB_HEADER_WORDS+i*3+2] = symlist[i]->value;
 		}
 		rb_putblock(type,rb_block,3*nsyms);
 	}
@@ -147,38 +153,44 @@ void rbsymlist(RB_WORD type,int symtype,struct sym_rec *symlist[],int nsyms){
 
 void rbexpr(RB_WORD type,int w,int m){
 	if(pass==2){
-  	flushrb();
-  	rb_block[ RB_RELFLAGS0 ] = rb_block[ RB_RELFLAGS1 ] = rb_block[ RB_RELFLAGS2 ] = 0;
-  	setrelflag(rb_block,0,m);
-  	rb_block[ RB_HEADER_WORDS ] = w; /* equivalence value */
-  	rb_putblock(type,rb_block,1);
+		flushrb();
+		rb_block[ RB_RELFLAGS0 ] = 
+		rb_block[ RB_RELFLAGS1 ] = 
+		rb_block[ RB_RELFLAGS2 ] = 0;
+		setrelflag(rb_block,0,m);
+		rb_block[ RB_HEADER_WORDS ] = w; /* equivalence value */
+		rb_putblock(type,rb_block,1);
 	}
 }
 
 void rbcomm(struct sym_rec *s,int w,int m){
 	if(pass==2){
-  	flushrb();
-  	s->type = LABELED_COMMON;
-  	rb_block[ RB_RELFLAGS0 ] = rb_block[ RB_RELFLAGS1 ] = rb_block[ RB_RELFLAGS2 ] = 0;
-  	setrelflag(rb_block,0,m);
-  	to_radix50(s->name,rb_block+RB_HEADER_WORDS,LABELED_COMMON);
-  	rb_block[ RB_HEADER_WORDS+2 ] = 0; /* equivalence value */
-  	rb_block[ RB_HEADER_WORDS+3 ] = w; /* expression value */
-  	rb_putblock(COMM_BLK,rb_block,4);
+		flushrb();
+		s->type = LABELED_COMMON;
+		rb_block[ RB_RELFLAGS0 ] = 
+		rb_block[ RB_RELFLAGS1 ] = 
+		rb_block[ RB_RELFLAGS2 ] = 0;
+		setrelflag(rb_block,0,m);
+		to_radix50(s->name,rb_block+RB_HEADER_WORDS,LABELED_COMMON);
+		rb_block[ RB_HEADER_WORDS+2 ] = 0; /* equivalence value */
+		rb_block[ RB_HEADER_WORDS+3 ] = w; /* expression value */
+		rb_putblock(COMM_BLK,rb_block,4);
 	}
 }
 
 void rbgadd(RB_WORD type,struct sym_rec *s,int w,int m){
 	if(pass==2){
-  	flushrb();
-  	rb_block[ RB_RELFLAGS0 ] = rb_block[ RB_RELFLAGS1 ] = rb_block[ RB_RELFLAGS2 ] = 0;
-  	setrelflag(rb_block,0,s->relmode);
-  	rb_block[ RB_HEADER_WORDS ] = s->value; /* address */
-  	to_radix50(s->name,rb_block+RB_HEADER_WORDS+1,0);
-  	rb_block[ RB_HEADER_WORDS+3 ] = 0; /* equivalence value */
-  	setrelflag(rb_block,1,m);
-  	rb_block[ RB_HEADER_WORDS+4 ] = w; /* expression value */
-  	rb_putblock(type,rb_block,5);
+		flushrb();
+		rb_block[ RB_RELFLAGS0 ] = 
+		rb_block[ RB_RELFLAGS1 ] = 
+		rb_block[ RB_RELFLAGS2 ] = 0;
+		setrelflag(rb_block,0,s->relmode);
+		rb_block[ RB_HEADER_WORDS ] = s->value; /* address */
+		to_radix50(s->name,rb_block+RB_HEADER_WORDS+1,0);
+		rb_block[ RB_HEADER_WORDS+3 ] = 0; /* equivalence value */
+		setrelflag(rb_block,1,m);
+		rb_block[ RB_HEADER_WORDS+4 ] = w; /* expression value */
+		rb_putblock(type,rb_block,5);
 	}
 }
 	
@@ -193,23 +205,23 @@ void assemble(int word,int m){
 				if(verbose){
 					disasm(s,word);
 					printf("[%06o] = %06o (%s)  %s\n", 
-						currentloc(),word,rb_relflag_short[m],s);
+					       currentloc(),word,rb_relflag_short[m],s);
 				}
 
-        if(bootprog){
-          if(bootwords){
-            fputc(word>>8,obj); fputc(word,obj);
-            --bootwords;
-          }
-        }else{
-  				if(!rb_count)
-  					startrb();
-  				setrelflag(rb_block,rb_count,m);
-  				rb_block[RB_HEADER_WORDS + rb_count] = word;
-          ++rb_count;
-  				if(rb_count == 15)
-  					flushrb();
-        }
+				if(bootprog){
+					if(bootwords){
+						fputc(word>>8,obj); fputc(word,obj);
+						--bootwords;
+					}
+				}else{
+					if(!rb_count)
+						startrb();
+					setrelflag(rb_block,rb_count,m);
+					rb_block[RB_HEADER_WORDS + rb_count] = word;
+					++rb_count;
+					if(rb_count == 15)
+						flushrb();
+				}
 
 				listo(currentloc(),word,m);
 			}
