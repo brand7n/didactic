@@ -1,15 +1,7 @@
-** v1.0 - 4-Sep-2002
-- FIXED interlocks between combinations of incompatible instructions are not implemented
-- FIXED parser doesn't accept a symbol (or expr starting with symbol) as instruction (unless after label)
-- FIXED I/O instructions are not yet entered in initial symbol table
-- FIXED object code is not written to a file
 - pseudo-instructions are largely unimplemented
 - symbol table dump at end of assembly is not sorted
-- FIXED no facility to generate a conventional listing file (i.e. annotated with original source lines)
+- line numbers in listing and/or symbol table dump don't correspond to actual source lines
 - improve source code commentary
 - check all constants and predefined tables for correctness
-
-- FIXED A-B is not parsed correctly (negate takes precedence over subtract?!)
 - expression operators are a bit skimpy (only add, subtract, negate)
-- FIXED lower case is rejected as illegal; perhaps should input be case-insensitive?
 - MOSTLY FIXED no native DG Nova object file output

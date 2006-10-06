@@ -1,5 +1,5 @@
 %{
-/*  
+/*
     This file is part of The Didactic PDP-8 Assembler
     Copyright (C) 2002 Toby Thain, toby@telegraphics.com.au
 
@@ -41,30 +41,32 @@ void yyrestart(FILE *fp){
 
 %%
 
-\n|\r|\r\n|\f		{ ++lineno; return TOK_SEP; } 
+\n|\r|\r\n|\f	{ ++lineno; return TOK_SEP; } 
 
-[ \t]+	; /* whitespace */
+[ \t]+			; /* whitespace */
 
 \/[^\f\n\r]*	; /* comment */
 
-\;		return TOK_SEP;
+\;				return TOK_SEP;
 
-[0-9]+		{ yylval.value = read_num(yytext,inputradix); 
-		DPRINTF("number: \"%s\" = octal %#o = decimal %d\n",
-			yytext,yylval.value,yylval.value); 
-		return TOK_NUM ; }
+[0-9]+			{
+				yylval.value = read_num(yytext,inputradix); 
+				DPRINTF("number: \"%s\" = octal %#o = decimal %d\n",
+				        yytext,yylval.value,yylval.value); 
+				return TOK_NUM;
+				}
 
-i|I		return 'I';
-z|Z		return 'Z';
+i|I				return 'I';
+z|Z				return 'Z';
 
-[A-Za-z][A-Za-z0-9]*	{ 
-		struct sym_rec *p = dosymbol(yytext,TOK_SYM);
-		yylval.symbol = p;
-		return p->token;
-		}
+[A-Za-z][A-Za-z0-9]* { 
+				struct sym_rec *p = dosymbol(yytext,TOK_SYM);
+				yylval.symbol = p;
+				return p->token;
+				}
 
-[\-+.*,=]	return yytext[0]; 
+[\-+.*,=]		return yytext[0]; 
 
-\$		return 0; /* end of input */
+\$				return 0; /* end of input */
 
-.		printf("illegal character:'%c'\n",yytext[0]);
+.				printf("illegal character:'%c'\n",yytext[0]);

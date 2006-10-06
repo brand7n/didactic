@@ -1,4 +1,4 @@
-/*  
+/*
     This file is part of The Didactic PDP-8 Assembler
     Copyright (C) 2002 Toby Thain, toby@telegraphics.com.au
 
@@ -49,21 +49,21 @@ void yyerror(char *s){
 }
 
 void warn(char *fmt,...){
-  char s[0x200];
-  va_list v;
+	char s[0x200];
+	va_list v;
 
-  va_start(v,fmt);
-  vsnprintf(s,0x200,fmt,v);
-  va_end(v);
-  err("WARNING",s);
+	va_start(v,fmt);
+	vsnprintf(s,0x200,fmt,v);
+	va_end(v);
+	err("WARNING",s);
 }
 
 void fatal(char *fmt,...){
-  char s[0x200];
-  va_list v;
+	char s[0x200];
+	va_list v;
 
-  va_start(v,fmt);
-  vsnprintf(s,0x200,fmt,v);
-  va_end(v);
-  yyerror(s);
+	va_start(v,fmt);
+	vsnprintf(s,0x200,fmt,v);
+	va_end(v);
+	yyerror(s);
 }

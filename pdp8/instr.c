@@ -1,4 +1,4 @@
-/*  
+/*
     This file is part of The Didactic PDP-8 Assembler
     Copyright (C) 2002 Toby Thain, toby@telegraphics.com.au
 
@@ -63,7 +63,7 @@ int combine(int op1,int op2){ /* combine non-memory reference instructions */
 		if(!DIFFGROUPS(op1,op2)){
 			if(op1 & GROUP_BIT){
 				/* group 2: check for incompatible skips: */
-			    if( ( (op1 & SKIPS) && (op2 & SKIPS) /* both conditional */
+				if( ( (op1 & SKIPS) && (op2 & SKIPS) /* both conditional */
 				  && ((op1^op2) & REVERSE_SENSE) ) /* and different senses */
 				|| ( (combop & SKIPS) /* or, either is conditional */
 				     && (ISSKP(op1) || ISSKP(op2)) ) ) /* and one is unconditional */

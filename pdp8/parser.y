@@ -1,5 +1,5 @@
 %{ 
-/*  
+/*
     This file is part of The Didactic PDP-8 Assembler
     Copyright (C) 2002 Toby Thain, toby@telegraphics.com.au
 
@@ -52,12 +52,12 @@ assign : TOK_SYM '=' assignval { doassign($1,$$ = $3,fixmri,0); }
 	;
 assignval : assign | instr ;
 
-labelinstr: TOK_SYM ',' { 
-        if( pass==1 && ($1->flags & F_ASSIGNED) )
-            warn("label already defined; ignoring this definition");
-        else 
-            doassign($1,curloc,TOK_SYM,0);
-		} 
+labelinstr: TOK_SYM ',' {
+		if( pass==1 && ($1->flags & F_ASSIGNED) )
+			warn("label already defined; ignoring this definition");
+		else 
+			doassign($1,curloc,TOK_SYM,0);
+	}
 	instr { $$ = $4; }
 	;
 asminstr : instr | labelinstr ;
@@ -67,8 +67,7 @@ stmt: /*empty*/
 	| asminstr { assemble($1,0); DPUTS("-- assemble word"); }
 	| assign { /*throw away final value of assignments*/ }
 
-	| TOK_FIELD TOK_NUM
-		{ DPRINTF("-- FIELD %o pseudo-instruction\n",$2); }
+	| TOK_FIELD TOK_NUM { DPRINTF("-- FIELD %o pseudo-instruction\n",$2); }
 	| TOK_EXPUNGE { expunge(); DPUTS("-- EXPUNGE pseudo-instruction"); }
 	| TOK_FIXMRI { fixmri = TOK_MRI; } 
 	  assign { fixmri = TOK_SYM; DPUTS("-- FIXMRI pseudo-instruction"); }
@@ -79,27 +78,29 @@ stmt: /*empty*/
 	;
 
 /* optional addressing modifier */
-mod:	  'I' { $$ = F_INDIRECT; DPUTS(" indirect modifier"); }
+mod:  'I' { $$ = F_INDIRECT; DPUTS(" indirect modifier"); }
 	| 'Z' { $$ = F_ZEROPAGE; DPUTS(" zero page modifier"); }
 	;
 mods: /*empty*/ { $$ = 0; }
 	| mods mod { $$ = $1 | $2; }
 	;
 
-mri: 	TOK_MRI mods expr { $$ = mri($1->value,$2,$3); 
-			    DPUTS("  memory-ref instruction"); }
+mri: TOK_MRI mods expr { $$ = mri($1->value,$2,$3); 
+						 DPUTS("  memory-ref instruction"); }
 	;
 
 term: TOK_NUM 
-	| TOK_SYM { if(pass==2 && !($1->flags & F_ASSIGNED))
-			fatal("undefined symbol");
-		    $$ = $1->value; }
-	| '.'  { $$ = curloc; }
+	| TOK_SYM {
+			if(pass==2 && !($1->flags & F_ASSIGNED))
+				fatal("undefined symbol");
+			$$ = $1->value;
+		}
+	| '.' { $$ = curloc; }
 	;
-comb: term | comb term { $$ = combine($1,$2); DPUTS(" (combine)"); }	
+comb: term | comb term { $$ = combine($1,$2); DPUTS(" (combine)"); }
 	;
 
-expr: comb 
+expr: comb
 	| expr '+' expr { $$ = ($1 + $3) ; DPUTS(" (add) "); }
 	| expr '-' expr { $$ = ($1 - $3) ; DPUTS(" (subtract) "); }
 	| '-' expr { $$ = -$2 ; DPUTS(" (negate)"); }

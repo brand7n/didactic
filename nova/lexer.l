@@ -1,5 +1,5 @@
 %{
-/*  
+/*
     This file is part of The Didactic PDP-8 Assembler
     Copyright (C) 2002 Toby Thain, toby@telegraphics.com.au
 
@@ -92,101 +92,101 @@ unsigned long read_float(char *s,int base){
 %}
 %x STRING INSTRING
 
-SPACE	[ \t\0\177]
+SPACE			[ \t\0\177]
 
 %%
 
 \n|\r|\r\n|\f	{ ++lineno; return TOK_SEP; } 
 
-{SPACE}+	; /* whitespace */
+{SPACE}+		; /* whitespace */
 
-@	{ indirect = 1; } /* otherwise ignored */
+@				{ indirect = 1; } /* otherwise ignored */
 
 \;[^\n\r\f]*	; /* comment */
 
-<STRING>{SPACE}+	; /* ignore these between TXT and opening delimiter */
-<STRING>. { /* any other character is significant */
-			delim = yytext[0];
-			nchars = 0; 
-			BEGIN(INSTRING);
-	}
-
-<INSTRING>[\n\r\f]	{ newline(); } /* ignore these in a string */
-<INSTRING>[^\n\r\f]+	{ /* any other character */
-		char *p;
-		int i;
-		for( i = yyleng,p = yytext ; i-- ; ++p ){
-				if(*p == delim){
-					stringchar(0); /* fill last unfilled word with zero byte */
-					if(!txtn) assemble(0,ABSOLUTE); /* trail with zero word, if enabled */
-					BEGIN(INITIAL);
-					return TOK_STRING;
-				}else{
-					int c = *p & 0177;
-					switch(txttok){
-					case TOK_TXTF: c |= PARITYBIT; break;
-					case TOK_TXTE: c = eparity[c]; break;
-					case TOK_TXTO: c = oparity[c]; break;
-					}
-					stringchar(c);
+<STRING>{SPACE}+ ; /* ignore these between TXT and opening delimiter */
+<STRING>.		{ /* any other character is significant */
+				delim = yytext[0];
+				nchars = 0; 
+				BEGIN(INSTRING);
 				}
-		}
-	}
 
-\".	{ yylval.value.value = yytext[1]; 
-	yylval.value.relmode = ABSOLUTE;
-	return TOK_NUM; }
+<INSTRING>[\n\r\f] { newline(); } /* ignore these in a string */
+<INSTRING>[^\n\r\f]+ { /* any other character */
+					char *p;
+					int i;
+					for( i = yyleng,p = yytext ; i-- ; ++p ){
+						if(*p == delim){
+							stringchar(0); /* fill last unfilled word with zero byte */
+							if(!txtn) assemble(0,ABSOLUTE); /* trail with zero word, if enabled */
+							BEGIN(INITIAL);
+							return TOK_STRING;
+						}else{
+							int c = *p & 0177;
+							switch(txttok){
+							case TOK_TXTF: c |= PARITYBIT; break;
+							case TOK_TXTE: c = eparity[c]; break;
+							case TOK_TXTO: c = oparity[c]; break;
+							}
+							stringchar(c);
+						}
+					}
+				}
+
+\".				{ yylval.value.value = yytext[1]; 
+				yylval.value.relmode = ABSOLUTE;
+				return TOK_NUM; }
 
 \'[^\'\n\r\f]*\'? { yylval.value.value = 0;
-			if(yyleng>0 && yytext[1] != '\'') 
-				yylval.value.value |= yytext[1]<<8;
-			if(yyleng>1 && yytext[2] != '\'') 
-				yylval.value.value |= yytext[2]; 
-			yylval.value.relmode = ABSOLUTE;
-			return TOK_NUM; }
+				if(yyleng>0 && yytext[1] != '\'') 
+					yylval.value.value |= yytext[1]<<8;
+				if(yyleng>1 && yytext[2] != '\'') 
+					yylval.value.value |= yytext[2]; 
+				yylval.value.relmode = ABSOLUTE;
+				return TOK_NUM; }
 
-[0-9]+		{ yylval.value.value = read_num(yytext,inputradix); 
-		DPRINTF("number: \"%s\" = octal %#o = decimal %d\n",
-			yytext,yylval.value.value ,yylval.value.value ); 
-		yylval.value.relmode = ABSOLUTE;
-		return TOK_NUM ; }
+[0-9]+			{ yylval.value.value = read_num(yytext,inputradix); 
+				DPRINTF("number: \"%s\" = octal %#o = decimal %d\n",
+					yytext,yylval.value.value ,yylval.value.value ); 
+				yylval.value.relmode = ABSOLUTE;
+				return TOK_NUM ; }
 
-[+-]?[0-9]+\.[0-9]*([eE][+-]?[0-9]+)?	{ 
-		/* single precision floating point constant */
-		warn("floating point constants not yet implemented");
-		//yylval.valuel = read_float(yytext,10);
-		return TOK_FPS;
-		}
+[+-]?[0-9]+\.[0-9]*([eE][+-]?[0-9]+)? { 
+				/* single precision floating point constant */
+				warn("floating point constants not yet implemented");
+				//yylval.valuel = read_float(yytext,10);
+				return TOK_FPS; }
 
-[+-]?[0-9]+[dD]		{ yylval.valuel = read_signed(yytext,inputradix); 
-		DPRINTF("double precision integer: \"%s\" = octal %#lo = decimal %ld\n",
-			yytext,yylval.valuel,yylval.valuel); 
-		return TOK_NUMD ; }
+[+-]?[0-9]+[dD]	{ yylval.valuel = read_signed(yytext,inputradix); 
+				DPRINTF("double precision integer: \"%s\" = octal %#lo = decimal %ld\n",
+					yytext,yylval.valuel,yylval.valuel); 
+				return TOK_NUMD ; }
 
 [.?A-Za-z][.?A-Za-z0-9_]*	 { 
-		struct sym_rec *p;
-		if(toupper(yytext[0]) == 'B'){
-			DPRINTF("recognised B... seenterm=%d\n",seenterm);
-			if(seenterm){
-				yyless(1); /* take B, and give rest of symbol back for re-parsing */
-				return 'B';
-			}
-		}
-		p = dosymbol(yytext,TOK_SYM);
-		if( p->token == TOK_TXT  || p->token == TOK_TXTE
-		 || p->token == TOK_TXTF || p->token == TOK_TXTO ){
-			txttok = p->token;
-			BEGIN(STRING);
-		}
-		yylval.symbol = p;
-		return p->token;
-	}
+					struct sym_rec *p;
+					if(toupper(yytext[0]) == 'B'){
+						DPRINTF("recognised B... seenterm=%d\n",seenterm);
+						if(seenterm){
+							yyless(1); /* take B, and give rest of symbol 
+										  back for re-parsing */
+							return 'B';
+						}
+					}
+					p = dosymbol(yytext,TOK_SYM);
+					if( p->token == TOK_TXT  || p->token == TOK_TXTE
+					 || p->token == TOK_TXTF || p->token == TOK_TXTO ){
+						txttok = p->token;
+						BEGIN(STRING);
+					}
+					yylval.symbol = p;
+					return p->token;
+				}
 
-"=="	return TOK_EQ;
-">="	return TOK_GE;
-"<="	return TOK_LE;
-"<>"	return TOK_NE;
+"=="			return TOK_EQ;
+">="			return TOK_GE;
+"<="			return TOK_LE;
+"<>"			return TOK_NE;
 
-[\-+.*,=#:/<>&!()]	return yytext[0]; 
+[\-+.*,=#:/<>&!()] return yytext[0]; 
 
-.		printf("illegal character:'%c'\n",yytext[0]);
+.				printf("illegal character:'%c'\n",yytext[0]);

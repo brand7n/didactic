@@ -1,4 +1,4 @@
-/*  
+/*
     This file is part of The Didactic PDP-8 Assembler
     Copyright (C) 2002 Toby Thain, toby@telegraphics.com.au
 
@@ -157,7 +157,7 @@ struct sym_rec *dosymbol(char *yytext,int tok){
 	struct sym_rec *p; 
 
 	if(!casesense) uppercase(yytext);
-  p = lookup(yytext);
+	p = lookup(yytext);
 	if(p){
 		DPRINTF("known symbol \"%s\" = %#o (token=%d)\n", 
 			p->name,p->value,p->token);

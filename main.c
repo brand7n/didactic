@@ -1,4 +1,4 @@
-/*  
+/*
     This file is part of The Didactic PDP-8 Assembler
     Copyright (C) 2002 Toby Thain, toby@telegraphics.com.au
 
@@ -73,7 +73,7 @@ Invoke with no source files to use interactively.\n",s);
 }
 
 int main(int argc,char *argv[]){
-  extern char *verbose_heading;
+	extern char *verbose_heading;
 	int i,nfiles=0;
 	FILE *fp;
 
@@ -88,8 +88,8 @@ int main(int argc,char *argv[]){
 				break;
 			case 'd': debug = 1; break;
 			case 'r': rimflag = 1; objsuffix = ".rim"; break;
-      case 'p': leader = 1; break;
-      case 'b': bootprog = 1; break;
+			case 'p': leader = 1; break;
+			case 'b': bootprog = 1; break;
 			case 'v': verbose = 1; break;
 			case 'l': listing = 1; break;
 			case 'w': banner(); warranty(); return EXIT_SUCCESS;
@@ -129,7 +129,7 @@ int main(int argc,char *argv[]){
 					fclose(fp);
 				}else
 					fprintf(stderr,"# can't open \"%s\"\n",inputfile);
-     }
+			}
 	}else{
 		interactive = 1;
 		banner();

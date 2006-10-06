@@ -1,4 +1,4 @@
-/*  
+/*
     This file is part of The Didactic PDP-8 Assembler
     Copyright (C) 2002 Toby Thain, toby@telegraphics.com.au
 
@@ -89,7 +89,6 @@ void disasm(char *s,int word){
 		ea = word & PAGE_ADDR;
 		if(word & CURR_PAGE)
 			ea |= curloc & ~PAGE_ADDR;
-
 
 		/*         |---|---|---|---|---|---|---|---|---|---|---|---| */
 		sprintf(s,"%s %c | %c |            %03o            | (addr=%04o)",

@@ -1,4 +1,4 @@
-/*  
+/*
     This file is part of The Didactic PDP-8 Assembler
     Copyright (C) 2002 Toby Thain, toby@telegraphics.com.au
 
@@ -41,7 +41,7 @@ void putleader()
 	if (obj && leader) {
 		int i;
 		for (i = 240 ; i-- ; )
- 			fputc( 0200, obj );
+			fputc( 0200, obj );
 	}
 }
 
@@ -63,7 +63,6 @@ void putorg( int loc )
 void putout( int loc, int val )
 /* put out a word of object code */
 {
-
 	if (obj != NULL) {
 
 		if (rimflag == 1) { /* put out origin in rim mode */
@@ -99,6 +98,7 @@ void setorg(int loc){
 
 void assemble(int word,int m){
 	char s[200];
+	
 	word &= wordmask;
 	if(pass==2){
 		if(verbose){

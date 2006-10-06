@@ -1,5 +1,5 @@
 %{ 
-/*  
+/*
     This file is part of The Didactic PDP-8 Assembler
     Copyright (C) 2002 Toby Thain, toby@telegraphics.com.au
 
@@ -119,7 +119,7 @@ void ignoring(char *s){
 program: /* empty */ 
 	| program stmt TOK_SEP { indirect = 0; flushlist(); }
 	| error TOK_SEP        { indirect = 0; flushlist(); yyerrok; } 
-					/* on error, skip to end of statement and recover */
+	  /* on error, skip to end of statement and recover */
 	;
 
 assign : TOK_SYM '=' assignval 
@@ -143,7 +143,6 @@ label : TOK_SYM ':' {
 		}
 	;
 labels : label | labels label ;
-
 
 stmt: /*empty*/
 	| labels
@@ -182,8 +181,8 @@ termnotsym : TOK_NUM { seenterm=1; }
 term : termnotsym 
 	| TOK_SYM { if(cond && pass==2 && !($1->flags & F_ASSIGNED)) 
 					fatal("undefined symbol");
-		        $$.value = $1->value;
-		        $$.relmode = $1->relmode; }
+				$$.value = $1->value;
+				$$.relmode = $1->relmode; }
 	;
 
 /*
@@ -376,7 +375,7 @@ textop : TOK_TXT | TOK_TXTE | TOK_TXTF | TOK_TXTO ;
 
 pseudoop :
 	  TOK_DALC TOK_SYM '=' instr { 
-	  	/* define an ALC instruction or expression */
+		/* define an ALC instruction or expression */
 		if(cond) dalc($2,$4.value); }
 	| TOK_DIAC TOK_SYM '=' instr {
 		/* define an instruction requiring an accumulator */

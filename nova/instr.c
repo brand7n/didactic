@@ -1,4 +1,4 @@
-/*  
+/*
     This file is part of The Didactic PDP-8 Assembler
     Copyright (C) 2002 Toby Thain, toby@telegraphics.com.au
 
@@ -37,7 +37,7 @@ int ea(int index,int indexseen,struct operand *op){
 			  assembled with the .EXTD pseudo-op), the displacement
 			  is set to the assembler .EXTD number  */
 		if( (op->relmode == ABSOLUTE && op->value == (op->value & 0377))
-				|| (op->relmode == PAGE_ZERO_REL) ){
+		 || (op->relmode == PAGE_ZERO_REL) ){
 			index = 0; 
 		}else if(op->relmode == EXT_DISP)
 			fatal("EXT_DISP relocation mode not yet supported");
