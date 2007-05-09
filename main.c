@@ -109,7 +109,7 @@ int main(int argc,char *argv[]){
 		if(verbose) banner();
 		for(i=1;i<argc;i++)
 			if(*argv[i] != '-'){
-				if(fp = fopen(inputfile = argv[i],"r")){
+				if( (fp = fopen(inputfile = argv[i],"r")) ){
 					VPRINTF("--- input: %s\n",inputfile);
 					errors = 0;
 

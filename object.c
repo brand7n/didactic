@@ -34,7 +34,7 @@ void open_out(char *fn){
 	strcpy(out,fn);
 	/*FIXME:strip existing suffix*/
 	strcat(out,objsuffix);
-	if(obj = fopen(out,"w")){
+	if( (obj = fopen(out,"w")) ){
 		if(verbose||interactive)
 			printf("--- object output: %s\n",out);
 		objheader();

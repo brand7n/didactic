@@ -30,7 +30,7 @@ char *endof(char *s){
 
 /* copy string; return pointer after last char copied */
 char *scpy(char *dst,char *s){
-	while(*dst = *s++)
+	while( (*dst = *s++) )
 		++dst;
 	return dst;
 }
@@ -44,7 +44,7 @@ char *sdup(char *s){
 char *uppercase(char *s){
 	char *p;
 	p = s;
-	while(*p = toupper(*p))
+	while( (*p = toupper(*p)) )
 		p++;
 	return s;
 }

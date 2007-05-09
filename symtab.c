@@ -44,7 +44,7 @@ unsigned long djb2(unsigned char *str){
 	unsigned long hash = 5381;
 	unsigned c;
 
-	while (c = *str++)
+	while ( (c = *str++) )
 		hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
 	return hash;
@@ -54,9 +54,9 @@ void init_symtab(){
 	struct sym_rec *p;
 	int i;
 
-	for(i=TABLE_SIZE;i--;)
+	for(i = TABLE_SIZE; i--;)
 		hash_table[i] = 0;
-	for(p=predefs;p->name;p++){
+	for(p = predefs; p->name; p++){
 		if(debug && lookup(p->name))
 			printf("!!!! duplicate predefined symbol: %s\n",p->name);
 		p->flags |= F_ASSIGNED;
@@ -70,10 +70,10 @@ void dump_symbols(){
 	int i,occ,maxchain,chain;
 
 	puts("\nsymbol table:");
-	for(i=occ=maxchain=0;i<TABLE_SIZE;i++)
+	for(i = occ = maxchain = 0; i < TABLE_SIZE; i++)
 		if(hash_table[i]){
 			++occ;
-			for(p=hash_table[i],chain=0;p;p=p->next){
+			for(p = hash_table[i], chain = 0; p; p = p->next){
 				++chain;
 				if(  /*debug ||*/  (p->flags & F_USER) ){
 					printf("  %-10s",p->name);
@@ -98,16 +98,16 @@ void dump_symbols(){
 
 struct sym_rec *lookup(char *s){
 	struct sym_rec *p;
-	unsigned idx = HASH(s);
+	unsigned idx = HASH((unsigned char*)s);
 	/* DPRINTF("# lookup \"%s\" hash=%5d\n",s,idx); */
-	for(p=hash_table[idx];p;p=p->next)
+	for(p = hash_table[idx]; p; p = p->next)
 		if(!strcmp(s,p->name))
 			return p;
 	return 0; /* not found */
 }
 
 void insert(struct sym_rec *p){
-	unsigned idx = HASH(p->name);
+	unsigned idx = HASH((unsigned char*)(p->name));
 	p->next = hash_table[idx];
 	hash_table[idx] = p;
 	/* DPRINTF("# insert symbol [%5d] \"%s\"\n",idx,p->name);*/
@@ -116,8 +116,9 @@ void insert(struct sym_rec *p){
 void expunge(){
 	int i;
 	struct sym_rec *p,*q;
-	for(i=0;i<TABLE_SIZE;i++){
-		for(p = hash_table[i];p;p=q){
+
+	for(i = 0; i < TABLE_SIZE; i++){
+		for(p = hash_table[i]; p; p = q){
 			DPRINTF(" deleting symbol \"%s\"\n",p->name);
 			q = p->next;
 			if(p->flags & F_USER)
@@ -128,6 +129,7 @@ void expunge(){
 }
 struct sym_rec *freechain(struct sym_rec *p,int l){
 	struct sym_rec *newnext;
+
 	if(p){
 		newnext = freechain(p->next,l+1);
 		/*while(l--) DPRINTF("  ");
@@ -149,7 +151,7 @@ struct sym_rec *freechain(struct sym_rec *p,int l){
 void clean_syms(){
 	int i;
 
-	for(i=0;i<TABLE_SIZE;i++)
+	for(i = 0; i < TABLE_SIZE; i++)
 		hash_table[i] = freechain(hash_table[i],0);
 }
 
@@ -208,9 +210,9 @@ struct heapnode *makeheap(void){
 	struct sym_rec *p;
 	int i;
 
-	for(i=maxlen=0;i<TABLE_SIZE;i++){
+	for(i = maxlen = 0; i < TABLE_SIZE; i++){
 		if(hash_table[i]){
-			for(p=hash_table[i] ; p ; p=p->next){
+			for(p = hash_table[i]; p; p = p->next){
 				if(  /*debug ||*/  (p->flags & F_USER) ){
 					/*if(p->flags & F_ASSIGNED)*/ {
 						NEW(q);

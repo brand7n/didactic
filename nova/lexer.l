@@ -1,7 +1,6 @@
-%{
 /*
     This file is part of The Didactic PDP-8 Assembler
-    Copyright (C) 2002 Toby Thain, toby@telegraphics.com.au
+    Copyright (C) 2002-7 Toby Thain, toby@telegraphics.com.au
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by  
@@ -18,6 +17,9 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+%option noyywrap
+
+%{
 #include <limits.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -25,8 +27,6 @@
 #include "asm.h"
 #include "nova.h"
 #include "parser.tab.h"
-
-#define yywrap() 1
 
 extern int seenterm,symflag;
 extern unsigned char eparity[],oparity[]; /* lookup tables for parity */

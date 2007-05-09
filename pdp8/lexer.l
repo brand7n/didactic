@@ -1,7 +1,6 @@
-%{
 /*
     This file is part of The Didactic PDP-8 Assembler
-    Copyright (C) 2002 Toby Thain, toby@telegraphics.com.au
+    Copyright (C) 2002-7 Toby Thain, toby@telegraphics.com.au
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by  
@@ -18,13 +17,15 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+%option noyywrap
+
+%{
+
 #include "asm.h"
 #include "pdp8.h"
 #include "parser.tab.h"
 
 #define GOT(S) printf("%s: \"%s\"\n",S,yytext);
-
-#define yywrap() 1
 
 int inputradix,pageno,lineno,casesense = 0;
 

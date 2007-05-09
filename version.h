@@ -1,3 +1,22 @@
+/*
+    This file is part of The Didactic PDP-8 Assembler
+    Copyright (C) 2002-7 Toby Thain, toby@telegraphics.com.au
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by  
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License  
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
 /* version history
 v1.0, 4-Sep-2002
  01-Jul-2003: 1.4b1 - Nova, PDP-8 targets
@@ -18,5 +37,6 @@ v1.0, 4-Sep-2002
  01-May-2005: 1.97 - ignore directives in bootstrap(!); also fix many compiler warnings
  03-May-2005: 1.98 - fix possible overflow crash in listing code
  07-May-2005: 1.99 - minor cleanups, most importantly, always clean symbols after each file
+ 09-May-2007: 1.991 - fix some warnings
 */
-#define VERS_STR "1.99"
+#define VERS_STR "1.991"
