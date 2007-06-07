@@ -53,7 +53,7 @@ void makepass(int p,FILE *fp){
 }
 
 void banner(){
-	printf("%s Assembler " VERS_STR ", Copyright (C) 2002-5 Toby Thain\n\n",target_arch);
+	printf("%s Assembler " VERS_STR ", Copyright (C) 2002-7 Toby Thain\n\n",target_arch);
 }
 
 void usage(char *s){
@@ -89,7 +89,7 @@ int main(int argc,char *argv[]){
 			case 'd': debug = 1; break;
 			case 'r': rimflag = 1; objsuffix = ".rim"; break;
 			case 'p': leader = 1; break;
-			case 'b': bootprog = 1; break;
+			case 'b': bootprog = 1; objsuffix = ".boot"; break;
 			case 'v': verbose = 1; break;
 			case 'l': listing = 1; break;
 			case 'w': banner(); warranty(); return EXIT_SUCCESS;

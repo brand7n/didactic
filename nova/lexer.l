@@ -93,36 +93,60 @@ unsigned long read_float(char *s,int base){
 %x STRING INSTRING
 
 SPACE			[ \t\0\177]
+NEWLINE			\n|\r|\r\n|\f
 
 %%
 
-\n|\r|\r\n|\f	{ ++lineno; return TOK_SEP; } 
+{NEWLINE}		{ ++lineno; return TOK_SEP; } 
 
 {SPACE}+		; /* whitespace */
 
-@				{ indirect = 1; } /* otherwise ignored */
+@				{ indirect = 1; }
 
 \;[^\n\r\f]*	; /* comment */
 
-<STRING>{SPACE}+ ; /* ignore these between TXT and opening delimiter */
-<STRING>.		{ /* any other character is significant */
+<STRING>{SPACE}+ ; /* ignore space between TXT and opening delimiter */
+<STRING>.		{ 
 				delim = yytext[0];
 				nchars = 0; 
 				BEGIN(INSTRING);
 				}
 
-<INSTRING>[\n\r\f] { newline(); } /* ignore these in a string */
+<INSTRING>(NEWLINE) { newline(); } /* ignore these in a string */
 <INSTRING>[^\n\r\f]+ { /* any other character */
 					char *p;
-					int i;
-					for( i = yyleng,p = yytext ; i-- ; ++p ){
-						if(*p == delim){
+					int i, c, bad = 0;
+					for(i = yyleng, p = yytext; i--;){
+						c = *p++;
+						if(c == delim){
 							stringchar(0); /* fill last unfilled word with zero byte */
 							if(!txtn) assemble(0,ABSOLUTE); /* trail with zero word, if enabled */
 							BEGIN(INITIAL);
 							return TOK_STRING;
 						}else{
-							int c = *p & 0177;
+							if(c == '<'){ // handle inline 'expression' for character code
+								if(i >= 3){ // shortest valid possibility is <N>
+									if(*p == '\"'){
+										if(i >= 3){ /* shortest is "X> */
+											c = p[1] & 0177;
+											i -= 2; p += 2;
+										}else bad = 1;
+									}else{ // parse a single octal number.
+										// FIXME: DG assembler handles a more complex expression here. Should ignore whitespace too?
+										for(c = 0; i && isdigit(*p); --i, ++p)
+											c = (c << 3) + (*p - '0'); // accumulate octal digit
+									}
+									if(i && *p == '>')
+										--i, ++p; // skip the '>'
+									else bad = 1;
+								}else bad = 1;
+								if(bad){
+									printf("bad <...> in string\n");
+									BEGIN(INITIAL);
+									return TOK_STRING; // what's the best way to signal a lexical error?
+								}
+							}
+							c &= 0177;
 							switch(txttok){
 							case TOK_TXTF: c |= PARITYBIT; break;
 							case TOK_TXTE: c = eparity[c]; break;
@@ -151,7 +175,7 @@ SPACE			[ \t\0\177]
 				yylval.value.relmode = ABSOLUTE;
 				return TOK_NUM ; }
 
-[+-]?[0-9]+\.[0-9]*([eE][+-]?[0-9]+)? { 
+[+-]?[0-9]+\.[0-9]*([eE][+-]?[0-9]+)? {
 				/* single precision floating point constant */
 				warn("floating point constants not yet implemented");
 				//yylval.valuel = read_float(yytext,10);
@@ -162,7 +186,7 @@ SPACE			[ \t\0\177]
 					yytext,yylval.valuel,yylval.valuel); 
 				return TOK_NUMD ; }
 
-[.?A-Za-z][.?A-Za-z0-9_]*	 { 
+[.?A-Za-z][.?A-Za-z0-9_]*	 {
 					struct sym_rec *p;
 					if(toupper(yytext[0]) == 'B'){
 						DPRINTF("recognised B... seenterm=%d\n",seenterm);

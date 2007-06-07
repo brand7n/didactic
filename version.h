@@ -38,5 +38,7 @@ v1.0, 4-Sep-2002
  03-May-2005: 1.98 - fix possible overflow crash in listing code
  07-May-2005: 1.99 - minor cleanups, most importantly, always clean symbols after each file
  09-May-2007: 1.991 - fix some warnings
+ 06-Jun-2007: 1.992 - use suffix .boot for bootstrap binary output;
+                      fix simple <N> and <"C> in strings (octal/character literal)
 */
-#define VERS_STR "1.991"
+#define VERS_STR "1.992"
