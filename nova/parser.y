@@ -21,6 +21,10 @@
 #include "asm.h"
 #include "nova.h"
 
+#ifndef TOK_TWOAC
+  #include "parser.tab.h"
+#endif
+
 extern int endflag,curloc,nrel_loc,zrel_loc,bootprog,indirect;
 int radix,saveradix,saveinexpr,indexseen,seenterm,relmode = NORMAL_REL,
     condtop = 0,cond = 1,condstack[MAXCONDDEPTH],txtm=0,txtn=0;
@@ -88,7 +92,6 @@ void ignoring(char *s){
 
 %token TOK_LE TOK_GE TOK_EQ TOK_NE
 %token TOK_SEP 
-%token TOK_SKIP TOK_NOAC TOK_ONEAC TOK_TWOAC TOK_IO TOK_TRAP
 %token <symbol> TOK_SYM TOK_SKIP TOK_NOAC TOK_ONEAC TOK_TWOAC TOK_IO TOK_TRAP
 
 /* pseudo-ops */

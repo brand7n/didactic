@@ -22,6 +22,10 @@
 #include "asm.h"
 #include "pdp8.h"
 
+#ifndef TOK_SYM
+  #include "parser.tab.h"
+#endif
+
 int radix,fixmri = TOK_SYM;
 
 %}
