@@ -18,6 +18,7 @@
 */
 
 %option noyywrap
+%option yylineno
 
 %{
 #include <limits.h>
@@ -32,7 +33,7 @@ extern int seenterm,symflag;
 extern unsigned char eparity[],oparity[]; /* lookup tables for parity */
 extern int txtm,txtn;
 
-int inputradix,pageno,lineno,casesense = 0,txttok,indirect = 0;
+int inputradix,pageno,casesense = 0,txttok,indirect = 0;
 char delim; /* string delimiter for current TXT directive */
 int nchars,strbuf[2];
 
@@ -87,7 +88,7 @@ unsigned long read_float(char *s,int base){
 	return 0;
 }
 
-#define YY_USER_ACTION dolisting(yy_act,yyleng,yytext);
+#define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; dolisting(yy_act,yyleng,yytext);
 
 %}
 %x STRING INSTRING
@@ -97,7 +98,7 @@ NEWLINE			\n|\r|\r\n|\f
 
 %%
 
-{NEWLINE}		{ ++lineno; return TOK_SEP; } 
+{NEWLINE}		{ return TOK_SEP; } 
 
 {SPACE}+		; /* whitespace */
 

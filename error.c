@@ -40,7 +40,7 @@ void err(char *kind,char *text){
 		fputc('\n',stderr);
 	}
 	fprintf(stderr,"# %s: %s @ line %d, %s\n",
-		kind,inputfile,lineno,text);
+		kind,inputfile,yylineno,text);
 }
 
 void yyerror(char *s){

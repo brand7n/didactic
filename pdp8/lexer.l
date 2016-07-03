@@ -27,7 +27,7 @@
 
 #define GOT(S) printf("%s: \"%s\"\n",S,yytext);
 
-int inputradix,pageno,lineno,casesense = 0;
+int inputradix,pageno,input_lineno,lineno,casesense = 0;
 
 #ifndef FLEX_SCANNER
 void yyrestart(FILE *fp){

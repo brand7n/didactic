@@ -19,14 +19,14 @@
 
 #include "asm.h"
 
-void doassign(struct sym_rec *p,int v,int tok,int relmode){ 
+void doassign(struct sym_rec *p,int v,int tok,int relmode,int lineno){
 	if( pass==1 && (p->flags & F_ASSIGNED) )
 		warn("symbol redefined");
 	p->value = v;
 	p->token = tok;
 	p->flags |= F_ASSIGNED;
 	p->pageno = pageno;
-	p->lineno = lineno-1;
+	p->lineno = lineno;
 	p->relmode = relmode;
 	DPRINTF("  \"%s\" <- %#o (relmode=%o)\n",p->name,p->value,relmode);
 }

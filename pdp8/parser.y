@@ -52,7 +52,7 @@ stmts: /* empty */
 		/* on error, skip to end of statement and recover */
 	;
 
-assign : TOK_SYM '=' assignval { doassign($1,$$ = $3,fixmri,0); }
+assign : TOK_SYM '=' assignval { doassign($1,$$ = $3,fixmri,0,@1.first_line); }
 	;
 assignval : assign | instr ;
 
@@ -60,7 +60,7 @@ labelinstr: TOK_SYM ',' {
 		if( pass==1 && ($1->flags & F_ASSIGNED) )
 			warn("label already defined; ignoring this definition");
 		else 
-			doassign($1,curloc,TOK_SYM,0);
+			doassign($1,curloc,TOK_SYM,0,@1.first_line);
 	}
 	instr { $$ = $4; }
 	;

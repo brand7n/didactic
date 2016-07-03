@@ -35,7 +35,7 @@ void makepass(int p,FILE *fp){
 	initcurloc();
 	words = 0;
 	radix = inputradix = 8;
-	lineno = pageno = 1;
+	pageno = 1;
 	newline();
 	yyrestart(fp);
 	endflag = 0; 
@@ -122,6 +122,7 @@ int main(int argc,char *argv[]){
 						open_out(inputfile);
 						/* do pass 2 */
 						rewind(fp);
+						yylineno = 0;
 						if(verbose) puts(verbose_heading);
 						makepass(2,fp);
 						close_out();

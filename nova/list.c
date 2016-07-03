@@ -29,11 +29,11 @@ char listfmt[] = "%02d %05o%c%06o%c%s\n",
 
 void listo(int a,int w,int m){
 	if(listpos){
-		if(listfile) fprintf(listfile,listfmt,lineno,a,rb_relflag_chars[relmode],
+		if(listfile) fprintf(listfile,listfmt,yylineno,a,rb_relflag_chars[relmode],
 							 w,rb_relflag_chars[m],listline);
 		newline();
 	}else if(!noloc && listfile) 
-		fprintf(listfile,listfmt_noloc,lineno,w,rb_relflag_chars[m],listline);
+		fprintf(listfile,listfmt_noloc,yylineno,w,rb_relflag_chars[m],listline);
 }
 void printsym(struct sym_rec *p){
 	extern int maxlen;
@@ -44,5 +44,5 @@ void printsym(struct sym_rec *p){
 }
 
 void listempty(char *line){
-	if(listfile) fprintf(listfile,listfmt_empty,lineno,line);
+	if(listfile) fprintf(listfile,listfmt_empty,yylineno,line);
 }

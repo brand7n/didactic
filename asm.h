@@ -57,7 +57,7 @@ extern FILE *listfile;
 
 extern struct sym_rec predefs[],*lastsym;
 extern int casesense,rimflag,leader,rbformat,
-	errors,pass,pageno,lineno,debug,interactive,verbose,
+	errors,pass,pageno,yylineno,debug,interactive,verbose,
 	inputradix,radix,curloc,words;
 extern FILE *obj;
 
@@ -84,7 +84,7 @@ void assemble(int word,int relmode);
 void setorg(int loc);
 void dump_object(void);
 
-void doassign(struct sym_rec *p,int value,int flags,int relmode);
+void doassign(struct sym_rec *p,int value,int flags,int relmode,int lineno);
 
 int mri(int opcode,int mod,int operand);
 int combine(int op1,int op2);

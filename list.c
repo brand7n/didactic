@@ -19,8 +19,10 @@
 
 #include "asm.h"
 
-int lasttok = 0,listpos = 0,words = 0,noloc = 0;
+/* lines longer than LIST_LINE will be truncated in the listing */
 #define LIST_LINE 72
+
+int lasttok = 0, listpos = 0, words = 0, noloc = 0, emitline = 0;
 char listline[LIST_LINE+1];
 FILE *listfile = NULL;
 
@@ -29,28 +31,22 @@ void dolisting(int act,int leng,char *text){
 	    n = leng < remain ? leng : remain;
 	//DPRINTF("--dolisting(%d,%d,\"%s\") remain=%d n=%d\n", act,leng,text,remain,n);
 
-	/* lines longer than LIST_LINE will be truncated in the listing */
-
+	// action 1 is line terminator
 	if(n && act != 1){
 		lasttok = listpos;
 		strncat(listline+listpos,text,n);
 		listpos += n;
 	}
+	emitline = 1;
 }
+
 void newline(void){
 	listline[listpos = 0] = 0;
+	emitline = 0;
 }
-/*
-void listo(int a,int w){
-	if(listpos){
-		if(listfile) fprintf(listfile,listfmt,a,w,listline);
-		newline();
-	}else if(!noloc && listfile) 
-		fprintf(listfile,listfmt_noloc,w,listline);
-}
-*/
+
 void flushlist(void){
-	if(listpos){
+	if(emitline){
 		listempty(listline);
 		newline();
 	}

@@ -31,7 +31,7 @@ int radix,saveradix,saveinexpr,indexseen,seenterm,relmode = NORMAL_REL,
 struct sym_rec *symlist[MAXSYMLIST];
 int nsyms = 0;
 
-void dalc(struct sym_rec *symbol,int v){
+void dalc(struct sym_rec *symbol,int v,int lineno){
 	char *sym = symbol->name,*p;
 	/* look for trailing flag characters */
 	if( strlen(sym) > 3 && (p = strpbrk(sym+3,"ZOCLRS")) == sym ){
@@ -39,10 +39,10 @@ void dalc(struct sym_rec *symbol,int v){
 		*p = 0; // strip flags. FIXME: there might be non-flag characters in the trailing part!!
 		twoac(sym,v);
 	}else
-		doassign(symbol,v,TOK_TWOAC,ABSOLUTE); 
+		doassign(symbol,v,TOK_TWOAC,ABSOLUTE,lineno); 
 }
 
-void dio(struct sym_rec *s,int v){
+void dio(struct sym_rec *s,int v,int lineno){
 	extern char *class_f[];
 	char *sym = s->name,*p;
 	
@@ -52,7 +52,7 @@ void dio(struct sym_rec *s,int v){
 		*p = 0; // strip flags. FIXME: there might be non-flag characters in the trailing part!!
 		iodata(sym,v,class_f);
 	}else
-		doassign(s,v,TOK_IO,ABSOLUTE); 
+		doassign(s,v,TOK_IO,ABSOLUTE,lineno); 
 }
 
 void badreloc(char *op){
@@ -81,6 +81,8 @@ void ignoring(char *s){
 }
 
 %}
+
+%locations
 
 /* Bison declarations */
 %union{
@@ -120,13 +122,13 @@ void ignoring(char *s){
 %% /* grammar rules */
 
 program: /* empty */ 
-	| program stmt TOK_SEP { indirect = 0; flushlist(); }
-	| error TOK_SEP        { indirect = 0; flushlist(); yyerrok; } 
+	| program stmt { /*dolisting(yy_act,yyleng,yytext);*/ } TOK_SEP { indirect = 0; flushlist(); }
+	| error TOK_SEP { indirect = 0; flushlist(); yyerrok; } 
 	  /* on error, skip to end of statement and recover */
 	;
 
 assign : TOK_SYM '=' assignval 
-		{ if(cond) doassign($1,$3.value,TOK_SYM,$3.relmode); 
+		{ if(cond) doassign($1, $3.value, TOK_SYM, $3.relmode, @1.first_line);
 		$$ = $3; }
 	;
 assignval : assign | instr ;
@@ -141,7 +143,7 @@ label : TOK_SYM ':' {
 					if(pass==1)
 						warn("label already defined; ignoring this definition");
 				}else 
-					doassign($1,currentloc(),TOK_SYM,relmode);
+					doassign($1, currentloc(), TOK_SYM, relmode, @1.first_line);
 			}
 		}
 	;
@@ -379,31 +381,31 @@ textop : TOK_TXT | TOK_TXTE | TOK_TXTF | TOK_TXTO ;
 pseudoop :
 	  TOK_DALC TOK_SYM '=' instr { 
 		/* define an ALC instruction or expression */
-		if(cond) dalc($2,$4.value); }
+		if(cond) dalc($2,$4.value,@2.first_line); }
 	| TOK_DIAC TOK_SYM '=' instr {
 		/* define an instruction requiring an accumulator */
-		if(cond) doassign($2,$4.value,TOK_ONEAC,0); }
+		if(cond) doassign($2,$4.value,TOK_ONEAC,0,@2.first_line); }
 	| TOK_DIO TOK_SYM '=' instr { 
 		/* define an I/O instruction that does not use an accumulator */
-		if(cond) dio($2,$4.value); }
+		if(cond) dio($2,$4.value,@2.first_line); }
 	| TOK_DIOA TOK_SYM '=' instr { 
 		/* define an I/O instruction having two required fields */
-		if(cond) dio($2,$4.value); }
+		if(cond) dio($2,$4.value,@2.first_line); }
 	| TOK_DISD TOK_SYM '=' instr { 
 		/* define an instruction with source and destination accumulators, no skip */
-		if(cond) doassign($2,$4.value,TOK_TWOAC,0); }
+		if(cond) doassign($2,$4.value,TOK_TWOAC,0,@2.first_line); }
 	| TOK_DISS TOK_SYM '=' instr { 
 		/* define an instruction with source and destination accumulators allowing skip */
-		if(cond) doassign($2,$4.value,TOK_TWOAC,0); }
+		if(cond) doassign($2,$4.value,TOK_TWOAC,0,@2.first_line); }
 	| TOK_DMR TOK_SYM '=' instr { 
 		/* define a memory reference instruction with displacement and index */
-		if(cond) doassign($2,$4.value,TOK_NOAC,0); }
+		if(cond) doassign($2,$4.value,TOK_NOAC,0,@2.first_line); }
 	| TOK_DMRA TOK_SYM '=' instr { 
 		/* define a memory reference instruction with 2 or 3 fields */
-		if(cond) doassign($2,$4.value,TOK_NOAC,0); }
+		if(cond) doassign($2,$4.value,TOK_NOAC,0,@2.first_line); }
 	| TOK_DUSR TOK_SYM '=' instr { 
 		/* define a user symbol without implied formatting */
-		if(cond) doassign($2,$4.value,TOK_SYM,ABSOLUTE /*??*/ ); }
+		if(cond) doassign($2,$4.value,TOK_SYM,ABSOLUTE /*??*/,@2.first_line); }
 	| TOK_XPNG { if(cond) clean_syms(); } /* remove all nonpermanent macro and symbol definitions */
 
 	| TOK_BLK expr { /* reserve a block of storage */ 

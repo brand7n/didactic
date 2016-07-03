@@ -171,7 +171,7 @@ struct sym_rec *dosymbol(char *yytext,int tok){
 		p->flags = symflag; /* normally F_USER unless in 'header' file (-s) */
 		p->type = USER_SYMBOL;
 		p->pageno = pageno;
-		p->lineno = lineno-1;
+		p->lineno = yylineno;
 		insert(p);
 		DPRINTF("new symbol \"%s\"\n",p->name);
 	}
