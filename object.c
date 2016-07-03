@@ -29,10 +29,13 @@ extern FILE *listfile;
 extern char *objsuffix;
 
 void open_out(char *fn){
-	char out[FILENAME_MAX+1];
+	char out[FILENAME_MAX+1], *ext;
 	
 	strcpy(out,fn);
-	/*FIXME:strip existing suffix*/
+	ext = index(out, '.');
+	if(ext) {
+	    *ext = 0;
+	}
 	strcat(out,objsuffix);
 	if( (obj = fopen(out,"w")) ){
 		if(verbose||interactive)
@@ -40,7 +43,10 @@ void open_out(char *fn){
 		objheader();
 	}
 	strcpy(out,fn);
-	/*FIXME:strip existing suffix*/
+    ext = index(out, '.');
+    if(ext) {
+        *ext = 0;
+    }
 	strcat(out,".lst");
 	if( listing && (listfile = fopen(out,"w")) ){
 		if(verbose||interactive)
